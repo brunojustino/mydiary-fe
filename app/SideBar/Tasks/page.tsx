@@ -1,48 +1,118 @@
-"use client";
+import { cn } from "@/lib/utils";
+import React, { useState } from "react";
 
-import className from "classnames";
-import React, { PropsWithChildren, useState } from "react";
+import girlFont from "@/lib/fonts";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-import {
-  ChevronDoubleLeftIcon,
-  ChevronDoubleRightIcon,
-  PlusCircleIcon,
-} from "@heroicons/react/24/outline";
-import { ClipboardListIcon } from "lucide-react";
+//import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { ClipboardListIcon, PlusCircleIcon, CheckIcon } from "lucide-react";
+
+import { Task } from "./types";
+import TaskItem from "./Task/page";
 
 type Props = {
   collapsed: boolean;
   setCollapsed(collapsed: boolean): void;
-  classname?: string;
+  className: string;
 };
 
-const Tasks = ({ collapsed, setCollapsed, classname }: Props) => {
-  const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
+const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
+  const [taskList, setTaskList] = useState<Task[]>([
+    { id: 1, name: "Wake up", completed: false },
+    { id: 2, name: "Make coofee", completed: false },
+    { id: 3, name: "Go to the gym", completed: true },
+    { id: 4, name: "Buy rice and eggs", completed: false },
+    { id: 5, name: "Clean the air conditioner", completed: true },
+    { id: 6, name: "Play guitarrrr", completed: false },
+  ]);
+
+  const updateTask = (updatedTask: Task) => {
+    const updatedTaskList = taskList.map((task) =>
+      task.id === updatedTask.id ? updatedTask : task
+    );
+    setTaskList(updatedTaskList);
+  };
+
+  const [showAddTask, setShowAddTask] = useState<boolean>(false);
+  const [newTaskName, setNewTaskName] = useState<string>("");
+
+  const addNewTask = () => {
+    if (newTaskName.trim() !== "") {
+      const newTask: Task = {
+        id: taskList.length + 1,
+        name: newTaskName,
+        completed: false,
+      };
+      setTaskList([...taskList, newTask]);
+      setNewTaskName("");
+      setShowAddTask(false);
+    }
+  };
   return (
     <li
-      className={className({
-        flex: true, //colors
+      className={cn(className, girlFont.className, {
+        "flex flex-col": true,
         "transition-colors duration-300 justify-center": true,
         "rounded-md p-2 mx-3 gap-4 ": !collapsed,
         "rounded-full p-2 mx-3 w-10 h-10 hover:border": collapsed,
       })}
+      onClick={() => setCollapsed(false)}
     >
-      <div className="flex">
-        <ClipboardListIcon className="w-6 h-6" />{" "}
+      <div className="flex justify-center">
+        {collapsed && <ClipboardListIcon className="w-6 h-6" />}
         <div
-          className={className({
+          className={cn({
             flex: true,
-            "w-24 ml-2": !collapsed,
+            "ml-2": !collapsed,
           })}
         >
-          <span className="mr-1">
+          <span className="mr-1 text-xl underline">
             {!collapsed && "Tasks"}
-            {classname + "aaaa"}
           </span>
-          {!collapsed && <PlusCircleIcon className="w-6 h-6 hover:border" />}
+          {!collapsed && (
+            <PlusCircleIcon
+              strokeWidth={1}
+              className="w-6 h-6 hover:scale-110"
+              onClick={() => setShowAddTask(true)}
+            />
+          )}
         </div>
-        {/* <PlusCircleIcon className="w-6 h-6" />{" "} */}
       </div>
+
+      <ul>
+        {taskList.map((task) => {
+          return (
+            <li key={task.id} className="flex justify-between group">
+              {!collapsed && (
+                <TaskItem key={task.id} task={task} updateTask={updateTask} />
+              )}
+            </li>
+          );
+        })}
+        {/* TODO only show this div when clicked add task button */}
+        {!collapsed && showAddTask && (
+          <div className="flex">
+            <Input
+              className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-green-600"
+              type="txt"
+              placeholder="Task"
+              value={newTaskName}
+              onChange={(e) => setNewTaskName(e.target.value)}
+            />
+            <Button
+              size="icon"
+              className="ml-1 bg-white hover:scale-110 hover:bg-gray-50  w-8 h-8 self-center"
+            >
+              <CheckIcon
+                strokeWidth={1}
+                className="w-4 h-4 text-green-500"
+                onClick={addNewTask}
+              />
+            </Button>
+          </div>
+        )}
+      </ul>
     </li>
   );
 };

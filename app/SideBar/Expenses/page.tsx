@@ -1,7 +1,8 @@
-"use client";
+import { cn } from "@/lib/utils";
 
-import classNames from "classnames";
 import React, { PropsWithChildren, useState } from "react";
+
+import girlFont from "@/lib/fonts";
 
 import {
   ChevronDoubleLeftIcon,
@@ -13,32 +14,45 @@ import {
 type Props = {
   collapsed: boolean;
   setCollapsed(collapsed: boolean): void;
+  className?: string;
 };
 
-const Expenses = ({ collapsed, setCollapsed }: Props) => {
+const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
   const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
   return (
     <li
-      className={classNames({
-        flex: true, //colors
+      className={cn(className, girlFont.className, {
+        "flex flex-col": true,
         "transition-colors duration-300 justify-center": true,
         "rounded-md p-2 mx-3 gap-4 ": !collapsed,
         "rounded-full p-2 mx-3 w-10 h-10 hover:border": collapsed,
       })}
+      onClick={() => setCollapsed(false)}
     >
-      <div className="flex">
+      <div className="flex justify-center">
         <CurrencyDollarIcon className="w-6 h-6" />{" "}
         <div
-          className={classNames({
+          className={cn({
             flex: true,
-            "w-24 ml-2": !collapsed,
+            "ml-2": !collapsed,
           })}
         >
-          <span className="mr-1">{!collapsed && "Expenses"}</span>
+          <span className="mr-1 text-xl underline">
+            {!collapsed && "Expenses"}
+          </span>
           {!collapsed && <PlusCircleIcon className="w-6 h-6 hover:border" />}
         </div>
-        {/* <PlusCircleIcon className="w-6 h-6" />{" "} */}
       </div>
+
+      <ul>
+        {/* {tasksList.map((task) => {
+          return (
+            <li key={task.id}>
+              <Task task={task} />
+            </li>
+          );
+        })} */}
+      </ul>
     </li>
   );
 };

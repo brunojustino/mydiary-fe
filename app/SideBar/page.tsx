@@ -5,8 +5,6 @@ import classNames from "classnames";
 import Link from "next/link";
 import Image from "next/image";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
 import User from "./User/page";
 import CalendarLi from "./Calendar/page";
 import Tasks from "./Tasks/page";
@@ -15,15 +13,7 @@ import Expenses from "./Expenses/page";
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
-  CalendarIcon,
-  FolderIcon,
-  HomeIcon,
-  UserGroupIcon,
-  ClipboardDocumentListIcon,
-  CurrencyDollarIcon,
-  PlusCircleIcon,
 } from "@heroicons/react/24/outline";
-import { ClipboardListIcon } from "lucide-react";
 
 type Props = {
   collapsed: boolean;
@@ -66,9 +56,13 @@ const Sidebar = ({ collapsed, shown, setCollapsed, date, setDate }: Props) => {
             <Tasks
               collapsed={collapsed}
               setCollapsed={setCollapsed}
-              className={"bg-white"}
+              className="bg-white"
             />
-            <Expenses collapsed={collapsed} setCollapsed={setCollapsed} />
+            <Expenses
+              collapsed={collapsed}
+              setCollapsed={setCollapsed}
+              className="bg-white"
+            />
           </ul>
         </nav>
       </div>

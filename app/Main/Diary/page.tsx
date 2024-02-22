@@ -1,12 +1,12 @@
 import { Textarea } from "@/components/ui/textarea";
-import { The_Girl_Next_Door } from "next/font/google";
+import girlFont from "@/lib/fonts";
 import classNames from "classnames";
 
-const girlFont = The_Girl_Next_Door({
-  weight: "400",
-  style: "normal",
-  subsets: ["latin"],
-});
+// const girlFont = The_Girl_Next_Door({
+//   weight: "400",
+//   style: "normal",
+//   subsets: ["latin"],
+// });
 
 const Diary = () => {
   return (
