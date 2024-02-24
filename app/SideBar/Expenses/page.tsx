@@ -22,14 +22,14 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
   return (
     <li
       className={cn(className, girlFont.className, {
-        "flex flex-col": true,
+        "flex flex-col rounded-sm": true,
         "transition-colors duration-300 justify-center": true,
         "rounded-md p-2 mx-3 gap-4 ": !collapsed,
         "rounded-full p-2 mx-3 w-10 h-10 hover:border": collapsed,
       })}
       onClick={() => setCollapsed(false)}
     >
-      <div className="flex justify-center">
+      <div className="flex justify-center m-auto">
         <CurrencyDollarIcon className="w-6 h-6" />{" "}
         <div
           className={cn({

@@ -28,7 +28,13 @@ const User = ({ collapsed, setCollapsed }: Props) => {
       })}
     >
       {/* <div className="flex gap-2"> */}
-      <Avatar className="h-12 w-12">
+      <Avatar
+        className={classNames({
+          "ml-5 ": !collapsed,
+          "ml-0": collapsed,
+          "h-12 w-12": true,
+        })}
+      >
         <AvatarImage
           src="https://github.com/shadcn.png"
           className="h-12 w-12"
@@ -55,7 +61,7 @@ const User = ({ collapsed, setCollapsed }: Props) => {
                 true,
 
               "transition-all duration-300 ease-in-out  ": true,
-              "mx-1 gap-4 relative left-[150px] top-[10px]": !collapsed,
+              "mx-1 gap-4 relative left-[130px] top-[10px]": !collapsed,
               "p-2 mx-3 w-10 h-10 relative left-[-16px] top-[10px]": collapsed,
             })}
             onClick={() => setCollapsed(!collapsed)}

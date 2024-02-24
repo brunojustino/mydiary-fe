@@ -34,6 +34,10 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
     setTaskList(updatedTaskList);
   };
 
+  const deleteTask = (taskId: number) => {
+    setTaskList(taskList.filter((task) => task.id !== taskId));
+  };
+
   const [showAddTask, setShowAddTask] = useState<boolean>(false);
   const [newTaskName, setNewTaskName] = useState<string>("");
 
@@ -52,14 +56,14 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
   return (
     <li
       className={cn(className, girlFont.className, {
-        "flex flex-col": true,
+        "flex flex-col rounded-sm": true,
         "transition-colors duration-300 justify-center": true,
         "rounded-md p-2 mx-3 gap-4 ": !collapsed,
         "rounded-full p-2 mx-3 w-10 h-10 hover:border": collapsed,
       })}
       onClick={() => setCollapsed(false)}
     >
-      <div className="flex justify-center">
+      <div className="flex justify-center m-auto">
         {collapsed && <ClipboardListIcon className="w-6 h-6" />}
         <div
           className={cn({
@@ -85,12 +89,20 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
           return (
             <li key={task.id} className="flex justify-between group">
               {!collapsed && (
-                <TaskItem key={task.id} task={task} updateTask={updateTask} />
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  updateTask={updateTask}
+                  deleteTask={deleteTask}
+                  newTaskName={newTaskName}
+                  setNewTaskName={setNewTaskName}
+                />
               )}
             </li>
           );
         })}
         {/* TODO only show this div when clicked add task button */}
+        {/* TODO implement edit and delete funcionality */}
         {!collapsed && showAddTask && (
           <div className="flex">
             <Input
