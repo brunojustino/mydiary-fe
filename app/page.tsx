@@ -22,7 +22,7 @@ export default function Home(props: PropsWithChildren) {
   return (
     <div
       className={classNames({
-        "grid bg-yellow-50 min-h-screen p-3": true,
+        "grid  min-h-screen p-3": true,
         "grid-cols-sidebar": !collapsed,
         "grid-cols-sidebar-collapsed": collapsed,
         "transition-[grid-template-columns] duration-300 ease-in-out": true,

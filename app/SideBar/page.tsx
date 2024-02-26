@@ -37,7 +37,7 @@ const Sidebar = ({ collapsed, shown, setCollapsed, date, setDate }: Props) => {
     >
       <div
         className={classNames({
-          "flex flex-col justify-between h-screen sticky inset-0 w-full": true,
+          "flex flex-col justify-between  sticky inset-0 w-full": true,
         })}
       >
         <nav className="flex-grow">

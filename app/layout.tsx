@@ -17,8 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="">
+    <html lang="en" className="overflow-auto">
+      <body className="bg-yellow-50">
         {/* <Layout> */}
         {children}
         {/* </Layout> */}

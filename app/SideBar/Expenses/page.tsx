@@ -2,13 +2,18 @@ import { cn } from "@/lib/utils";
 
 import React, { PropsWithChildren, useState } from "react";
 
+import { Expense } from "./types";
+import ExpenseItem from "./Expense/page";
+
 import girlFont from "@/lib/fonts";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
 import {
-  ChevronDoubleLeftIcon,
-  ChevronDoubleRightIcon,
   PlusCircleIcon,
   CurrencyDollarIcon,
+  CheckIcon,
 } from "@heroicons/react/24/outline";
 
 type Props = {
@@ -18,19 +23,53 @@ type Props = {
 };
 
 const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
-  const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
+  const [expensesList, setExpensesList] = useState<Expense[]>([
+    { id: 1, value: 5.0, paid: false },
+    { id: 2, value: 10.0, paid: false },
+    { id: 3, value: 255.0, paid: true },
+    { id: 4, value: 2486.45, paid: false },
+    { id: 5, value: 80.58, paid: true },
+    { id: 6, value: 26.99, paid: false },
+  ]);
+
+  const [showAddExpense, setShowAddExpense] = useState<boolean>(false);
+  const [newExpenseValue, setNewExpenseValue] = useState<number>(0);
+
+  const updateExpense = (updatedExpense: Expense) => {
+    const updatedExpensesList = expensesList.map((expense) =>
+      expense.id === updatedExpense.id ? updatedExpense : expense
+    );
+    setExpensesList(updatedExpensesList);
+  };
+
+  const deleteExpense = (expenseId: number) => {
+    setExpensesList(expensesList.filter((expense) => expense.id !== expenseId));
+  };
+
+  const addNewExpense = () => {
+    if (newExpenseValue !== 0) {
+      const newExpense: Expense = {
+        id: expensesList.length + 1,
+        value: newExpenseValue,
+        paid: false,
+      };
+      setExpensesList([...expensesList, newExpense]);
+      setNewExpenseValue(0);
+      setShowAddExpense(false);
+    }
+  };
   return (
     <li
       className={cn(className, girlFont.className, {
         "flex flex-col rounded-sm": true,
         "transition-colors duration-300 justify-center": true,
-        "rounded-md p-2 mx-3 gap-4 ": !collapsed,
+        "rounded-md p-2 mx-3 gap-1 ": !collapsed,
         "rounded-full p-2 mx-3 w-10 h-10 hover:border": collapsed,
       })}
       onClick={() => setCollapsed(false)}
     >
       <div className="flex justify-center m-auto">
-        <CurrencyDollarIcon className="w-6 h-6" />{" "}
+        {collapsed && <CurrencyDollarIcon className="w-6 h-6" />}
         <div
           className={cn({
             flex: true,
@@ -40,18 +79,66 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
           <span className="mr-1 text-xl underline">
             {!collapsed && "Expenses"}
           </span>
-          {!collapsed && <PlusCircleIcon className="w-6 h-6 hover:border" />}
+          {!collapsed && (
+            <PlusCircleIcon
+              strokeWidth={1}
+              className="w-6 h-6 hover:scale-110"
+              onClick={() => {
+                setShowAddExpense(true);
+              }}
+            />
+          )}
         </div>
       </div>
 
       <ul>
-        {/* {tasksList.map((task) => {
+        {expensesList.map((expense) => {
           return (
-            <li key={task.id}>
-              <Task task={task} />
+            <li key={expense.id} className="flex justify-between group">
+              {!collapsed && (
+                <ExpenseItem
+                  key={expense.id}
+                  expense={expense}
+                  updateExpense={updateExpense}
+                  deleteExpense={deleteExpense}
+                  newExpenseValue={newExpenseValue}
+                  setNewExpenseValue={setNewExpenseValue}
+                />
+              )}
             </li>
           );
-        })} */}
+        })}
+
+        {!collapsed && showAddExpense && (
+          <div className="flex">
+            <Input
+              className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-green-600"
+              type="number"
+              placeholder="Value"
+              value={newExpenseValue}
+              onChange={(e) => setNewExpenseValue(parseFloat(e.target.value))}
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter") addNewExpense();
+              }}
+              onBlur={() => {
+                newExpenseValue == 0
+                  ? setShowAddExpense(false)
+                  : addNewExpense();
+              }}
+            />
+            <Button
+              size="icon"
+              className="ml-1 bg-white hover:scale-110 hover:bg-gray-50  w-8 h-8 self-center"
+            >
+              <CheckIcon
+                strokeWidth={1}
+                className="w-4 h-4 text-green-500"
+                onClick={addNewExpense}
+              />
+            </Button>
+          </div>
+        )}
       </ul>
     </li>
   );

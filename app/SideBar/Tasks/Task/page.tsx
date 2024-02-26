@@ -44,6 +44,7 @@ const TaskItem = ({
   const editTask = () => {
     const updatedTask = { ...task, name: newTaskName };
     updateTask(updatedTask);
+    setNewTaskName("");
     setDisplayInput(false);
   };
 
