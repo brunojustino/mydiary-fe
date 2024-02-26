@@ -41,6 +41,12 @@ const TaskItem = ({
     setDisplayInput(true);
   };
 
+  const editTask = () => {
+    const updatedTask = { ...task, name: newTaskName };
+    updateTask(updatedTask);
+    setDisplayInput(false);
+  };
+
   const taskDisplay = () => {
     return (
       <>
@@ -75,6 +81,13 @@ const TaskItem = ({
           placeholder="Task"
           value={newTaskName}
           onChange={(e) => setNewTaskName(e.target.value)}
+          autoFocus
+          onKeyDown={(e) => {
+            if (e.key === "Enter") editTask();
+          }}
+          onBlur={() => {
+            newTaskName.trim() == "" ? setDisplayInput(false) : editTask();
+          }}
         />
         <Button
           size="icon"
@@ -83,11 +96,7 @@ const TaskItem = ({
           <CheckIcon
             strokeWidth={1}
             className="w-4 h-4 text-green-500"
-            onClick={() => {
-              const updatedTask = { ...task, name: newTaskName };
-              updateTask(updatedTask);
-              setDisplayInput(false);
-            }}
+            onClick={editTask}
           />
         </Button>
       </div>

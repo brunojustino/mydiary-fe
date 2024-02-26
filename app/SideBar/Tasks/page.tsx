@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import girlFont from "@/lib/fonts";
 import { Button } from "@/components/ui/button";
@@ -78,7 +78,9 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
             <PlusCircleIcon
               strokeWidth={1}
               className="w-6 h-6 hover:scale-110"
-              onClick={() => setShowAddTask(true)}
+              onClick={() => {
+                setShowAddTask(true);
+              }}
             />
           )}
         </div>
@@ -111,6 +113,13 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
               placeholder="Task"
               value={newTaskName}
               onChange={(e) => setNewTaskName(e.target.value)}
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter") addNewTask();
+              }}
+              onBlur={() => {
+                newTaskName.trim() == "" ? setShowAddTask(false) : addNewTask();
+              }}
             />
             <Button
               size="icon"
