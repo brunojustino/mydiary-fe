@@ -24,16 +24,23 @@ type Props = {
 
 const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
   const [expensesList, setExpensesList] = useState<Expense[]>([
-    { id: 1, value: 5.0, paid: false },
-    { id: 2, value: 10.0, paid: false },
-    { id: 3, value: 255.0, paid: true },
-    { id: 4, value: 2486.45, paid: false },
-    { id: 5, value: 80.58, paid: true },
-    { id: 6, value: 99999999.99, paid: false },
+    { id: 1, name: "water", value: 5.0, paid: false },
+    { id: 2, name: "netflix", value: 10.0, paid: false },
+    { id: 3, name: "school", value: 255.0, paid: true },
+    { id: 4, name: "rent", value: 2486.45, paid: false },
+    { id: 5, name: "hooker", value: 80.58, paid: true },
+    {
+      id: 6,
+      name: "this is really big text for a simple description",
+      value: 99999999.99,
+      paid: false,
+    },
+    { id: 7, name: "hookers", value: 180.58, paid: true },
   ]);
 
   const [showAddExpense, setShowAddExpense] = useState<boolean>(false);
   const [newExpenseValue, setNewExpenseValue] = useState<number>(0);
+  const [newExpenseName, setNewExpenseName] = useState<string>("");
 
   const updateExpense = (updatedExpense: Expense) => {
     const updatedExpensesList = expensesList.map((expense) =>
@@ -50,6 +57,7 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
     if (newExpenseValue !== 0) {
       const newExpense: Expense = {
         id: expensesList.length + 1,
+        name: newExpenseName,
         value: newExpenseValue,
         paid: false,
       };
@@ -63,7 +71,7 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
       className={cn(className, girlFont.className, {
         "flex flex-col rounded-sm": true,
         "transition-colors duration-300 justify-center": true,
-        "rounded-md p-2 mx-3 gap-1 ": !collapsed,
+        "rounded-sm p-2 mx-3 gap-1 ": !collapsed,
         "rounded-full p-2 mx-3 w-10 h-10 hover:border": collapsed,
       })}
       onClick={() => setCollapsed(false)}
@@ -91,9 +99,9 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
         </div>
       </div>
 
-      <div className="flex  border-b-[1px] border-black justify-between">
-        <ul>
-          {expensesList.map((expense) => {
+      <div className="flex  border-b-[1px] border-black justify-between pb-2">
+        <ul className="w-full">
+          {/* {expensesList.map((expense) => {
             return (
               <li key={expense.id} className="flex justify-between group">
                 <div className="flex w-full justify-between">
@@ -110,8 +118,28 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
                 </div>
               </li>
             );
-          })}
+          })} */}
 
+          {expensesList.map((expense) => (
+            // <div
+            //   key={expense.id}
+            //   className="flex justify-between w-full items-stretch place-items-center"
+            // >
+            //   <div className="w-44">{expense.name}</div>
+            //   <span className="border-l-[1px] border-black flex-grow mt-0"></span>
+            //   <span className="w-20 mt-auto">{`R$ ${expense.value.toFixed(
+            //     2
+            //   )} `}</span>
+            // </div>
+            <ExpenseItem
+              key={expense.id}
+              expense={expense}
+              updateExpense={updateExpense}
+              deleteExpense={deleteExpense}
+              newExpenseValue={newExpenseValue}
+              setNewExpenseValue={setNewExpenseValue}
+            />
+          ))}
           {!collapsed && showAddExpense && (
             <div className="flex">
               <Input
@@ -143,7 +171,7 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
             </div>
           )}
         </ul>
-        <div className="border-r-[1px] border-black m-1"></div>
+        {/* <div className="border-r-[1px] border-black m-1"></div>
         <ul className="w-18">
           {expensesList.map((expense) => {
             return (
@@ -151,6 +179,7 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
             );
           })}
         </ul>
+      </div> */}
       </div>
       <div className="flex justify-end">R$ 99.999.999.99</div>
     </li>

@@ -27,6 +27,9 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
     { id: 6, name: "Play guitarrrr", completed: false },
   ]);
 
+  const [showAddTask, setShowAddTask] = useState<boolean>(false);
+  const [newTaskName, setNewTaskName] = useState<string>("");
+
   const updateTask = (updatedTask: Task) => {
     const updatedTaskList = taskList.map((task) =>
       task.id === updatedTask.id ? updatedTask : task
@@ -37,9 +40,6 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
   const deleteTask = (taskId: number) => {
     setTaskList(taskList.filter((task) => task.id !== taskId));
   };
-
-  const [showAddTask, setShowAddTask] = useState<boolean>(false);
-  const [newTaskName, setNewTaskName] = useState<string>("");
 
   const addNewTask = () => {
     if (newTaskName.trim() !== "") {
@@ -53,12 +53,13 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
       setShowAddTask(false);
     }
   };
+
   return (
     <li
       className={cn(className, girlFont.className, {
         "flex flex-col rounded-sm": true,
         "transition-colors duration-300 justify-center": true,
-        "rounded-md p-2 mx-3 gap-1 ": !collapsed,
+        "rounded-sm p-2 mx-3 gap-1 ": !collapsed,
         "rounded-full p-2 mx-3 w-10 h-10 hover:border": collapsed,
       })}
       onClick={() => setCollapsed(false)}

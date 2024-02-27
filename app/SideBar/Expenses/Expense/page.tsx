@@ -51,9 +51,45 @@ const ExpenseItem = ({
   const expenseDisplay = () => {
     return (
       <>
-        <div className="flex">
-          Fudeu Gastei d+++++++
-          {/* <div className="flex">
+        <div
+          key={expense.id}
+          className="flex justify-between w-full items-stretch place-items-center"
+        >
+          <div
+            className={cn({
+              "w-44 flex group": true,
+            })}
+          >
+            {expense.name}
+            <div className="flex flex-nowrap">
+              <SquarePenIcon
+                className="w-4 h-4 hidden group-hover:block hover:scale-110 "
+                onClick={handleEditExpenseClick}
+              />
+              <Trash2Icon
+                className="w-4 h-4 hidden group-hover:block hover:scale-110 "
+                onClick={handleDeleteExpenseClick}
+              />
+            </div>
+          </div>
+          <span className="border-l-[1px] border-black flex-grow mt-0"></span>
+          <div
+            className={cn({
+              "line-through": expense.paid, //hover:no-underline
+              "hover:line-through": !expense.paid,
+              "w-20 flex my-auto items-center group pl-1": true,
+            })}
+          >
+            {`R$ ${expense.value.toFixed(2)} `}
+            <div className="flex flex-nowrap">
+              <SquarePenIcon
+                className="w-4 h-4 hidden group-hover:block hover:scale-110 "
+                onClick={handleEditExpenseClick}
+              />
+            </div>
+          </div>
+        </div>
+        {/* <div className="flex">
             <SquarePenIcon
               className="w-5 h-5 hidden group-hover:block hover:scale-110 "
               onClick={handleEditExpenseClick}
@@ -63,7 +99,6 @@ const ExpenseItem = ({
               onClick={handleDeleteExpenseClick}
             />
           </div> */}
-        </div>
       </>
     );
   };

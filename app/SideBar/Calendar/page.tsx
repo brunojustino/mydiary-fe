@@ -37,7 +37,7 @@ const CalendarLi = ({ collapsed, setCollapsed, date, setDate }: Props) => {
           mode="single"
           selected={date}
           onDayClick={setDate}
-          className="rounded-sm border "
+          className="rounded-sm border w-[280px] flex justify-center border-black"
         />
       )}
     </li>
