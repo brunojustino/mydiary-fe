@@ -51,24 +51,18 @@ const ExpenseItem = ({
   const expenseDisplay = () => {
     return (
       <>
-        <span
-          className={cn({
-            "line-through": expense.paid, //hover:no-underline
-            "hover:line-through": !expense.paid,
-          })}
-          onClick={handleExpenseClick}
-        >
-          {expense.value}
-        </span>
         <div className="flex">
-          <SquarePenIcon
-            className="w-5 h-5 hidden group-hover:block hover:scale-110 "
-            onClick={handleEditExpenseClick}
-          />
-          <Trash2Icon
-            className="w-5 h-5 hidden group-hover:block hover:scale-110 "
-            onClick={handleDeleteExpenseClick}
-          />
+          Fudeu Gastei d+++++++
+          {/* <div className="flex">
+            <SquarePenIcon
+              className="w-5 h-5 hidden group-hover:block hover:scale-110 "
+              onClick={handleEditExpenseClick}
+            />
+            <Trash2Icon
+              className="w-5 h-5 hidden group-hover:block hover:scale-110 "
+              onClick={handleDeleteExpenseClick}
+            />
+          </div> */}
         </div>
       </>
     );
@@ -109,5 +103,17 @@ const ExpenseItem = ({
 
   return <>{!displayInput ? expenseDisplay() : inputDisplay()}</>;
 };
+
+// line trhought logic
+// {/* <span
+// className={cn({
+//   "line-through": expense.paid, //hover:no-underline
+//   "hover:line-through": !expense.paid,
+//   "flex justify-start w-20": true,
+// })}
+// onClick={handleExpenseClick}
+// >
+// {/* {` R$ ${expense.value.toFixed(2)}`} */}
+// </span> */}
 
 export default ExpenseItem;

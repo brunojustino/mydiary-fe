@@ -29,7 +29,7 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
     { id: 3, value: 255.0, paid: true },
     { id: 4, value: 2486.45, paid: false },
     { id: 5, value: 80.58, paid: true },
-    { id: 6, value: 26.99, paid: false },
+    { id: 6, value: 99999999.99, paid: false },
   ]);
 
   const [showAddExpense, setShowAddExpense] = useState<boolean>(false);
@@ -91,55 +91,68 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
         </div>
       </div>
 
-      <ul>
-        {expensesList.map((expense) => {
-          return (
-            <li key={expense.id} className="flex justify-between group">
-              {!collapsed && (
-                <ExpenseItem
-                  key={expense.id}
-                  expense={expense}
-                  updateExpense={updateExpense}
-                  deleteExpense={deleteExpense}
-                  newExpenseValue={newExpenseValue}
-                  setNewExpenseValue={setNewExpenseValue}
-                />
-              )}
-            </li>
-          );
-        })}
+      <div className="flex  border-b-[1px] border-black justify-between">
+        <ul>
+          {expensesList.map((expense) => {
+            return (
+              <li key={expense.id} className="flex justify-between group">
+                <div className="flex w-full justify-between">
+                  {!collapsed && (
+                    <ExpenseItem
+                      key={expense.id}
+                      expense={expense}
+                      updateExpense={updateExpense}
+                      deleteExpense={deleteExpense}
+                      newExpenseValue={newExpenseValue}
+                      setNewExpenseValue={setNewExpenseValue}
+                    />
+                  )}
+                </div>
+              </li>
+            );
+          })}
 
-        {!collapsed && showAddExpense && (
-          <div className="flex">
-            <Input
-              className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-green-600"
-              type="number"
-              placeholder="Value"
-              value={newExpenseValue}
-              onChange={(e) => setNewExpenseValue(parseFloat(e.target.value))}
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === "Enter") addNewExpense();
-              }}
-              onBlur={() => {
-                newExpenseValue == 0
-                  ? setShowAddExpense(false)
-                  : addNewExpense();
-              }}
-            />
-            <Button
-              size="icon"
-              className="ml-1 bg-white hover:scale-110 hover:bg-gray-50  w-8 h-8 self-center"
-            >
-              <CheckIcon
-                strokeWidth={1}
-                className="w-4 h-4 text-green-500"
-                onClick={addNewExpense}
+          {!collapsed && showAddExpense && (
+            <div className="flex">
+              <Input
+                className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-green-600"
+                type="number"
+                placeholder="Value"
+                value={newExpenseValue}
+                onChange={(e) => setNewExpenseValue(parseFloat(e.target.value))}
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") addNewExpense();
+                }}
+                onBlur={() => {
+                  newExpenseValue == 0
+                    ? setShowAddExpense(false)
+                    : addNewExpense();
+                }}
               />
-            </Button>
-          </div>
-        )}
-      </ul>
+              <Button
+                size="icon"
+                className="ml-1 bg-white hover:scale-110 hover:bg-gray-50  w-8 h-8 self-center"
+              >
+                <CheckIcon
+                  strokeWidth={1}
+                  className="w-4 h-4 text-green-500"
+                  onClick={addNewExpense}
+                />
+              </Button>
+            </div>
+          )}
+        </ul>
+        <div className="border-r-[1px] border-black m-1"></div>
+        <ul className="w-18">
+          {expensesList.map((expense) => {
+            return (
+              <li key={expense.id}> {`R$ ${expense.value.toFixed(2)} `}</li>
+            );
+          })}
+        </ul>
+      </div>
+      <div className="flex justify-end">R$ 99.999.999.99</div>
     </li>
   );
 };
