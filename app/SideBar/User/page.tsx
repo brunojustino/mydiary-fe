@@ -8,16 +8,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
-  HomeIcon,
-  PlusCircleIcon,
 } from "@heroicons/react/24/outline";
 
 type Props = {
   collapsed: boolean;
   setCollapsed(collapsed: boolean): void;
+  showSideBar: boolean;
+  setShowSidebar(shown: boolean): void;
 };
 
-const User = ({ collapsed, setCollapsed }: Props) => {
+const User = ({
+  collapsed,
+  setCollapsed,
+  showSideBar,
+  setShowSidebar,
+}: Props) => {
   const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
   return (
     <li
@@ -65,6 +70,7 @@ const User = ({ collapsed, setCollapsed }: Props) => {
               "p-2 mx-3 w-10 h-10 relative left-[-16px] top-[10px]": collapsed,
             })}
             onClick={() => setCollapsed(!collapsed)}
+            // onClick={() => setShowSidebar(!showSideBar)}
           >
             <Icon className="w-5 h-5 " />
           </button>

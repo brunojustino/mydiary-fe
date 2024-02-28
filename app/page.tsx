@@ -31,7 +31,8 @@ export default function Home(props: PropsWithChildren) {
       <SideBar
         collapsed={collapsed}
         setCollapsed={setSidebarCollapsed}
-        shown={showSidebar}
+        showSideBar={showSidebar}
+        setShowSidebar={setShowSidebar}
         date={date}
         setDate={setDate}
       />

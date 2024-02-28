@@ -42,6 +42,11 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
   const [newExpenseValue, setNewExpenseValue] = useState<number>(0);
   const [newExpenseName, setNewExpenseName] = useState<string>("");
 
+  const totalValue = expensesList.reduce(
+    (acc, expense) => acc + expense.value,
+    0
+  );
+
   const updateExpense = (updatedExpense: Expense) => {
     const updatedExpensesList = expensesList.map((expense) =>
       expense.id === updatedExpense.id ? updatedExpense : expense
@@ -54,7 +59,7 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
   };
 
   const addNewExpense = () => {
-    if (newExpenseValue !== 0) {
+    if (newExpenseValue !== 0 && newExpenseName.trim() !== "") {
       const newExpense: Expense = {
         id: expensesList.length + 1,
         name: newExpenseName,
@@ -63,16 +68,17 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
       };
       setExpensesList([...expensesList, newExpense]);
       setNewExpenseValue(0);
+      setNewExpenseName("");
       setShowAddExpense(false);
     }
   };
   return (
     <li
       className={cn(className, girlFont.className, {
-        "flex flex-col rounded-sm": true,
+        "flex flex-col": true,
         "transition-colors duration-300 justify-center": true,
         "rounded-sm p-2 mx-3 gap-1 ": !collapsed,
-        "rounded-full p-2 mx-3 w-10 h-10 hover:border": collapsed,
+        "rounded-full mx-3 p-2 w-10 h-10 hover:border": collapsed,
       })}
       onClick={() => setCollapsed(false)}
     >
@@ -99,56 +105,54 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
         </div>
       </div>
 
-      <div className="flex  border-b-[1px] border-black justify-between pb-2">
+      <div
+        className={cn({
+          "flex justify-between pb-2": true,
+          "border-b-[1px] border-black": !collapsed,
+          "border-b-0 pb-0": collapsed,
+        })}
+      >
         <ul className="w-full">
-          {/* {expensesList.map((expense) => {
-            return (
-              <li key={expense.id} className="flex justify-between group">
-                <div className="flex w-full justify-between">
-                  {!collapsed && (
-                    <ExpenseItem
-                      key={expense.id}
-                      expense={expense}
-                      updateExpense={updateExpense}
-                      deleteExpense={deleteExpense}
-                      newExpenseValue={newExpenseValue}
-                      setNewExpenseValue={setNewExpenseValue}
-                    />
-                  )}
-                </div>
-              </li>
-            );
-          })} */}
+          {!collapsed &&
+            expensesList.map((expense) => (
+              <>
+                {!collapsed && (
+                  <ExpenseItem
+                    key={expense.id}
+                    expense={expense}
+                    updateExpense={updateExpense}
+                    deleteExpense={deleteExpense}
+                    newExpenseValue={newExpenseValue}
+                    setNewExpenseValue={setNewExpenseValue}
+                    newExpenseName={newExpenseName}
+                    setNewExpenseName={setNewExpenseName}
+                  />
+                )}
+              </>
+            ))}
 
-          {expensesList.map((expense) => (
-            // <div
-            //   key={expense.id}
-            //   className="flex justify-between w-full items-stretch place-items-center"
-            // >
-            //   <div className="w-44">{expense.name}</div>
-            //   <span className="border-l-[1px] border-black flex-grow mt-0"></span>
-            //   <span className="w-20 mt-auto">{`R$ ${expense.value.toFixed(
-            //     2
-            //   )} `}</span>
-            // </div>
-            <ExpenseItem
-              key={expense.id}
-              expense={expense}
-              updateExpense={updateExpense}
-              deleteExpense={deleteExpense}
-              newExpenseValue={newExpenseValue}
-              setNewExpenseValue={setNewExpenseValue}
-            />
-          ))}
+          {/* TODO fix onBlur methods */}
           {!collapsed && showAddExpense && (
             <div className="flex">
               <Input
-                className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-green-600"
+                className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-green-600 m-0 h-7 before: p-2 text-md"
+                type="text"
+                placeholder="Description"
+                value={newExpenseName}
+                onChange={(e) => setNewExpenseName(e.target.value)}
+                autoFocus
+                onBlur={() => {
+                  newExpenseName.trim() == "" && newExpenseValue == 0
+                    ? setShowAddExpense(false)
+                    : addNewExpense();
+                }}
+              />
+              <Input
+                className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-green-600 m-0 h-7 before: p-2 text-md w-1/3"
                 type="number"
                 placeholder="Value"
                 value={newExpenseValue}
                 onChange={(e) => setNewExpenseValue(parseFloat(e.target.value))}
-                autoFocus
                 onKeyDown={(e) => {
                   if (e.key === "Enter") addNewExpense();
                 }}
@@ -181,7 +185,11 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
         </ul>
       </div> */}
       </div>
-      <div className="flex justify-end">R$ 99.999.999.99</div>
+      {!collapsed && (
+        <div className="flex justify-end pr-5 text-xl ">
+          <span>Total: {totalValue.toFixed(2)}</span>
+        </div>
+      )}
     </li>
   );
 };

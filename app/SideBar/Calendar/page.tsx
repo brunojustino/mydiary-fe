@@ -5,11 +5,7 @@ import React, { PropsWithChildren, useState } from "react";
 
 import { Calendar } from "@/components/ui/calendar";
 
-import {
-  ChevronDoubleUpIcon,
-  ChevronDoubleDownIcon,
-  CalendarIcon,
-} from "@heroicons/react/24/outline";
+import { CalendarIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   collapsed: boolean;
@@ -19,11 +15,10 @@ type Props = {
 };
 
 const CalendarLi = ({ collapsed, setCollapsed, date, setDate }: Props) => {
-  const Icon = collapsed ? ChevronDoubleDownIcon : ChevronDoubleUpIcon;
   return (
     <li
       className={classNames({
-        flex: true, //colors
+        flex: true,
         "transition-colors duration-300 bg-white": true, //animation
         "rounded-md mx-auto": !collapsed,
         "rounded-full p-2 mx-3 w-10 h-10 hover:border": collapsed,

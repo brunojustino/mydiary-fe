@@ -14,7 +14,9 @@ interface Props {
   updateExpense: (updatedExpense: Expense) => void;
   deleteExpense: (deletedExpense: number) => void;
   newExpenseValue: number;
-  setNewExpenseValue: (name: number) => void;
+  setNewExpenseValue: (value: number) => void;
+  newExpenseName: string;
+  setNewExpenseName: (name: string) => void;
 }
 
 const ExpenseItem = ({
@@ -23,6 +25,8 @@ const ExpenseItem = ({
   deleteExpense,
   newExpenseValue,
   setNewExpenseValue,
+  newExpenseName,
+  setNewExpenseName,
 }: Props) => {
   const [displayInput, setDisplayInput] = useState<boolean>(false);
 
@@ -33,16 +37,25 @@ const ExpenseItem = ({
 
   const handleDeleteExpenseClick = () => {
     setNewExpenseValue(0.0);
+    setNewExpenseName("");
     deleteExpense(expense.id);
   };
 
-  const handleEditExpenseClick = () => {
+  const handleEditExpenseValueClick = () => {
     setNewExpenseValue(expense.value);
+    setDisplayInput(true);
+  };
+  const handleEditExpenseNameClick = () => {
+    setNewExpenseName(expense.name);
     setDisplayInput(true);
   };
 
   const editExpense = () => {
-    const updatedExpense = { ...expense, value: newExpenseValue };
+    const updatedExpense = {
+      ...expense,
+      name: newExpenseName,
+      value: newExpenseValue,
+    };
     updateExpense(updatedExpense);
     setNewExpenseValue(0.0);
     setDisplayInput(false);
@@ -57,14 +70,14 @@ const ExpenseItem = ({
         >
           <div
             className={cn({
-              "w-44 flex group": true,
+              "w-44 flex group mt-1": true,
             })}
           >
-            {expense.name}
+            <span className="leading-5">{expense.name}</span>
             <div className="flex flex-nowrap">
               <SquarePenIcon
-                className="w-4 h-4 hidden group-hover:block hover:scale-110 "
-                onClick={handleEditExpenseClick}
+                className="w-4 h-4 hidden group-hover:block hover:scale-110 ml-1"
+                onClick={handleEditExpenseNameClick}
               />
               <Trash2Icon
                 className="w-4 h-4 hidden group-hover:block hover:scale-110 "
@@ -72,19 +85,28 @@ const ExpenseItem = ({
               />
             </div>
           </div>
-          <span className="border-l-[1px] border-black flex-grow mt-0"></span>
+          {/* line */}
+          <span
+            className={cn({
+              "line-through": expense.paid, //hover:no-underline
+              "hover:line-through": !expense.paid,
+              "border-l-[1px] border-black flex-grow mt-0": true,
+            })}
+          ></span>
           <div
             className={cn({
               "line-through": expense.paid, //hover:no-underline
               "hover:line-through": !expense.paid,
-              "w-20 flex my-auto items-center group pl-1": true,
+              "w-20 flex my-auto items-center group justify-stretch": true,
             })}
           >
-            {`R$ ${expense.value.toFixed(2)} `}
-            <div className="flex flex-nowrap">
+            <span className="flex-shrink-0">{`${expense.value.toFixed(
+              2
+            )} `}</span>
+            <div className="flex">
               <SquarePenIcon
-                className="w-4 h-4 hidden group-hover:block hover:scale-110 "
-                onClick={handleEditExpenseClick}
+                className="w-4 h-4 hidden group-hover:block hover:scale-110 ml-1"
+                onClick={handleEditExpenseValueClick}
               />
             </div>
           </div>
@@ -102,41 +124,146 @@ const ExpenseItem = ({
       </>
     );
   };
+
   const inputDisplay = () => {
     return (
-      <div className="flex">
-        <Input
-          className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-green-600 m-0 h-8 before: p-2 text-md"
-          type="number"
-          placeholder="Value"
-          value={newExpenseValue}
-          onChange={(e) => {
-            console.log("Value - " + parseFloat(e.target.value));
-            setNewExpenseValue(parseFloat(e.target.value));
-          }}
-          autoFocus
-          onKeyDown={(e) => {
-            if (e.key === "Enter") editExpense();
-          }}
-          onBlur={() => {
-            newExpenseValue == 0 ? setDisplayInput(false) : editExpense();
-          }}
-        />
-        <Button
-          size="icon"
-          className="ml-1 bg-white hover:scale-110 hover:bg-gray-50  w-8 h-8 self-center"
+      <>
+        <div
+          key={expense.id}
+          className="flex justify-between w-full items-stretch place-items-center"
         >
-          <CheckIcon
-            strokeWidth={1}
-            className="w-4 h-4 text-green-500"
-            onClick={editExpense}
-          />
-        </Button>
-      </div>
-    );
-  };
+          <div
+            className={cn({
+              "w-44 flex group mt-1": true,
+            })}
+          >
+            <Input
+              className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-green-600 m-0 h-7 before: p-2 text-md"
+              type="txt"
+              placeholder="Task"
+              value={newExpenseName}
+              onChange={(e) => setNewExpenseName(e.target.value)}
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter") editExpense();
+              }}
+              onBlur={() => {
+                newExpenseName.trim() == ""
+                  ? setDisplayInput(false)
+                  : editExpense();
+              }}
+            />
+            <Button
+              size="icon"
+              className="ml-1 bg-white hover:scale-105 hover:bg-gray-50  w-4 h-4 self-center"
+            >
+              <CheckIcon
+                strokeWidth={1}
+                className="w-4 h-4 text-green-500"
+                onClick={editExpense}
+              />
+            </Button>
+          </div>
 
-  return <>{!displayInput ? expenseDisplay() : inputDisplay()}</>;
+          <span className="border-l-[1px] border-black flex-grow mt-0"></span>
+          <div
+            className={cn({
+              "line-through": expense.paid, //hover:no-underline
+              "hover:line-through": !expense.paid,
+              "w-20 flex my-auto items-center group justify-stretch": true,
+            })}
+          >
+            <span className="flex-shrink-0">{`${expense.value.toFixed(
+              2
+            )} `}</span>
+            <div className="flex">
+              <SquarePenIcon
+                className="w-4 h-4 hidden group-hover:block hover:scale-110 ml-1"
+                onClick={handleEditExpenseValueClick}
+              />
+            </div>
+          </div>
+        </div>
+        {/* <div className="flex">
+            <SquarePenIcon
+              className="w-5 h-5 hidden group-hover:block hover:scale-110 "
+              onClick={handleEditExpenseClick}
+            />
+            <Trash2Icon
+              className="w-5 h-5 hidden group-hover:block hover:scale-110 "
+              onClick={handleDeleteExpenseClick}
+            />
+          </div> */}
+      </>
+    );
+  }; //end input name display
+
+  const inputValueDisplay = () => {
+    return (
+      <>
+        <div
+          key={expense.id}
+          className="flex justify-between w-full items-stretch place-items-center"
+        >
+          <div
+            className={cn({
+              "w-44 flex group mt-1": true,
+            })}
+          >
+            <span className="leading-5">{expense.name}</span>
+          </div>
+
+          <span className="border-l-[1px] border-black flex-grow mt-0"></span>
+          <div
+            className={cn({
+              "line-through": expense.paid, //hover:no-underline
+              "hover:line-through": !expense.paid,
+              "w-20 flex my-auto items-center group justify-stretch": true,
+            })}
+          >
+            <Input
+              className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-green-600 m-0 h-7 before: p-2 text-md"
+              type="number"
+              placeholder="Value"
+              value={newExpenseValue}
+              onChange={(e) => setNewExpenseValue(parseFloat(e.target.value))}
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter") editExpense();
+              }}
+              onBlur={() => {
+                newExpenseValue == 0 ? setDisplayInput(false) : editExpense();
+              }}
+            />
+            <Button
+              size="icon"
+              className="ml-1 bg-white hover:scale-105 hover:bg-gray-50  w-4 h-4 self-center"
+            >
+              <CheckIcon
+                strokeWidth={1}
+                className="w-4 h-4 text-green-500"
+                onClick={editExpense}
+              />
+            </Button>
+          </div>
+        </div>
+        {/* <div className="flex">
+            <SquarePenIcon
+              className="w-5 h-5 hidden group-hover:block hover:scale-110 "
+              onClick={handleEditExpenseClick}
+            />
+            <Trash2Icon
+              className="w-5 h-5 hidden group-hover:block hover:scale-110 "
+              onClick={handleDeleteExpenseClick}
+            />
+          </div> */}
+      </>
+    );
+  }; //end input name display
+
+  // TODO Fix right display on edit click
+  // TODO Some places are not clearing the name and value state properly
+  return <>{!displayInput ? expenseDisplay() : inputValueDisplay()}</>;
 };
 
 // line trhought logic
