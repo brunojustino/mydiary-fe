@@ -6,7 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 //import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import { ClipboardListIcon, PlusCircleIcon, CheckIcon } from "lucide-react";
+import {
+  ClipboardListIcon,
+  PlusCircleIcon,
+  MinusCircleIcon,
+  CheckIcon,
+} from "lucide-react";
 
 import { Task } from "./types";
 import TaskItem from "./Task/page";
@@ -29,6 +34,7 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
 
   const [showAddTask, setShowAddTask] = useState<boolean>(false);
   const [newTaskName, setNewTaskName] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const updateTask = (updatedTask: Task) => {
     const updatedTaskList = taskList.map((task) =>
@@ -75,12 +81,22 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
           <span className="mr-1 text-xl underline">
             {!collapsed && "Tasks"}
           </span>
-          {!collapsed && (
+          {!collapsed && !showAddTask && (
             <PlusCircleIcon
               strokeWidth={1}
               className="w-6 h-6 hover:scale-110"
               onClick={() => {
                 setShowAddTask(true);
+              }}
+            />
+          )}
+          {!collapsed && showAddTask && (
+            <MinusCircleIcon
+              strokeWidth={1}
+              className="w-6 h-6 hover:scale-110"
+              onClick={() => {
+                setErrorMessage("");
+                setShowAddTask(false);
               }}
             />
           )}
@@ -104,8 +120,7 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
             </li>
           );
         })}
-        {/* TODO only show this div when clicked add task button */}
-        {/* TODO implement edit and delete funcionality */}
+
         {!collapsed && showAddTask && (
           <div className="flex">
             <Input
