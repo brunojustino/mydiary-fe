@@ -231,24 +231,13 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
         {!collapsed && (
           <div className="flex justify-between pr-5 text-lg ">
             <span className="w-16">Total:</span>
-            <span>
-              {" "}
-              {totalValue.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </span>
+            <span>{formatNumber(totalValue)}</span>
           </div>
         )}
         {!collapsed && (
           <div className="flex justify-between pr-5 text-lg ">
             <span className="w-16">Pago:</span>
-            <span>
-              {totalPago.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </span>
+            <span>{formatNumber(totalPago)}</span>
           </div>
         )}
         {!collapsed && (
