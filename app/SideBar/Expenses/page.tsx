@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 
 import React, { PropsWithChildren, useState } from "react";
 
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 
 import {
   PlusCircleIcon,
+  MinusCircleIcon,
   CurrencyDollarIcon,
   CheckIcon,
 } from "@heroicons/react/24/outline";
@@ -41,11 +42,16 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
   const [showAddExpense, setShowAddExpense] = useState<boolean>(false);
   const [newExpenseValue, setNewExpenseValue] = useState<number>(0);
   const [newExpenseName, setNewExpenseName] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const totalValue = expensesList.reduce(
     (acc, expense) => acc + expense.value,
     0
   );
+  const totalPago = expensesList.reduce((acc, expense) => {
+    if (expense.paid) return acc + expense.value;
+    else return acc;
+  }, 0);
 
   const updateExpense = (updatedExpense: Expense) => {
     const updatedExpensesList = expensesList.map((expense) =>
@@ -69,9 +75,25 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
       setExpensesList([...expensesList, newExpense]);
       setNewExpenseValue(0);
       setNewExpenseName("");
+      setErrorMessage("");
       setShowAddExpense(false);
     }
   };
+
+  const onBlurValue = () => {
+    if (newExpenseValue <= 0) {
+      setErrorMessage("Fill the form");
+    }
+  };
+  const onBlurName = () => {
+    if (newExpenseName == "") {
+      setErrorMessage("Fill the form");
+    } // else {
+    //   addNewExpense();
+    // }
+  };
+
+  // TODO add masl to value display: 9,999,999,999.00
   return (
     <li
       className={cn(className, girlFont.className, {
@@ -93,12 +115,22 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
           <span className="mr-1 text-xl underline">
             {!collapsed && "Expenses"}
           </span>
-          {!collapsed && (
+          {!collapsed && !showAddExpense && (
             <PlusCircleIcon
               strokeWidth={1}
               className="w-6 h-6 hover:scale-110"
               onClick={() => {
                 setShowAddExpense(true);
+              }}
+            />
+          )}
+          {!collapsed && showAddExpense && (
+            <MinusCircleIcon
+              strokeWidth={1}
+              className="w-6 h-6 hover:scale-110"
+              onClick={() => {
+                setErrorMessage("");
+                setShowAddExpense(false);
               }}
             />
           )}
@@ -112,10 +144,10 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
           "border-b-0 pb-0": collapsed,
         })}
       >
-        <ul className="w-full">
+        <div className="w-full">
           {!collapsed &&
             expensesList.map((expense) => (
-              <>
+              <div key={expense.id}>
                 {!collapsed && (
                   <ExpenseItem
                     key={expense.id}
@@ -128,10 +160,9 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
                     setNewExpenseName={setNewExpenseName}
                   />
                 )}
-              </>
+              </div>
             ))}
 
-          {/* TODO fix onBlur methods */}
           {!collapsed && showAddExpense && (
             <div className="flex">
               <Input
@@ -139,28 +170,30 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
                 type="text"
                 placeholder="Description"
                 value={newExpenseName}
-                onChange={(e) => setNewExpenseName(e.target.value)}
-                autoFocus
-                onBlur={() => {
-                  newExpenseName.trim() == "" && newExpenseValue == 0
-                    ? setShowAddExpense(false)
-                    : addNewExpense();
+                onChange={(e) => {
+                  setNewExpenseName(e.target.value);
+                  if (e.target.value.trim() !== "") {
+                    setErrorMessage("");
+                  }
                 }}
+                autoFocus
+                onBlur={onBlurName}
               />
               <Input
                 className="focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-green-600 m-0 h-7 before: p-2 text-md w-1/3"
                 type="number"
                 placeholder="Value"
                 value={newExpenseValue}
-                onChange={(e) => setNewExpenseValue(parseFloat(e.target.value))}
+                onChange={(e) => {
+                  setNewExpenseValue(parseFloat(e.target.value));
+                  if (parseFloat(e.target.value) > 0) {
+                    setErrorMessage("");
+                  }
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") addNewExpense();
                 }}
-                onBlur={() => {
-                  newExpenseValue == 0
-                    ? setShowAddExpense(false)
-                    : addNewExpense();
-                }}
+                onBlur={onBlurValue}
               />
               <Button
                 size="icon"
@@ -174,7 +207,16 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
               </Button>
             </div>
           )}
-        </ul>
+          {errorMessage.trim() !== "" && (
+            <div
+              className={cn({
+                "text-xs mx-auto text-red-600 pl-3": true,
+              })}
+            >
+              {errorMessage}
+            </div>
+          )}
+        </div>
         {/* <div className="border-r-[1px] border-black m-1"></div>
         <ul className="w-18">
           {expensesList.map((expense) => {
@@ -185,11 +227,37 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
         </ul>
       </div> */}
       </div>
-      {!collapsed && (
-        <div className="flex justify-end pr-5 text-xl ">
-          <span>Total: {totalValue.toFixed(2)}</span>
-        </div>
-      )}
+      <div className="flex flex-col justify-end">
+        {!collapsed && (
+          <div className="flex justify-between pr-5 text-lg ">
+            <span className="w-16">Total:</span>
+            <span>
+              {" "}
+              {totalValue.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </span>
+          </div>
+        )}
+        {!collapsed && (
+          <div className="flex justify-between pr-5 text-lg ">
+            <span className="w-16">Pago:</span>
+            <span>
+              {totalPago.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </span>
+          </div>
+        )}
+        {!collapsed && (
+          <div className="flex justify-between pr-5 text-lg ">
+            <span className="w-16">Saldo: </span>
+            <span>{formatNumber(totalValue - totalPago)}</span>
+          </div>
+        )}
+      </div>
     </li>
   );
 };
