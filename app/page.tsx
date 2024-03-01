@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import classNames from "classnames";
-import React, { PropsWithChildren, useState } from "react";
+import React, { PropsWithChildren, useState, useEffect } from "react";
 import SideBar from "@/app/SideBar/page";
 import Main from "@/app/Main/page";
 
@@ -19,6 +19,23 @@ export default function Home(props: PropsWithChildren) {
   //everything according to the current date
   //
   console.log(date);
+
+  // TODO if screensize is to small only show the sidebar or the main content have a button to choose between
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+      setSidebarCollapsed(!collapsed);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div
       className={classNames({

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,11 +9,6 @@ import User from "./User/page";
 import CalendarLi from "./Calendar/page";
 import Tasks from "./Tasks/page";
 import Expenses from "./Expenses/page";
-
-import {
-  ChevronDoubleLeftIcon,
-  ChevronDoubleRightIcon,
-} from "@heroicons/react/24/outline";
 
 type Props = {
   collapsed: boolean;
@@ -31,8 +26,6 @@ const Sidebar = ({
   date,
   setDate,
 }: Props) => {
-  const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
-
   return (
     <div
       className={classNames({
