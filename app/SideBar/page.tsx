@@ -33,7 +33,7 @@ const Sidebar = ({
         "transition-all duration-300 ease-in-out": true,
         "w-[300px]": !collapsed,
         "w-20": collapsed,
-        "-translate-x-full": !showSideBar,
+        "-translate-x-full static": !showSideBar,
       })}
     >
       <div

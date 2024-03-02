@@ -9,51 +9,71 @@ import Main from "@/app/Main/page";
 export default function Home(props: PropsWithChildren) {
   const [collapsed, setSidebarCollapsed] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [showMain, setShowMain] = useState(true);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-  //also gonna need date and user to pass to the sidebar and the main page
-  //in the sidebar we have calendar, task and expenses component.
-  //in the calendar we set the date and load info based on the date selected
-  //in the tasks and expenses we load inof based on the selected date
-  //in the main page we have a week days tab from sun to sat
-  //and have the main page containing the diary
-  //everything according to the current date
-  //
-  console.log(date);
-
-  // TODO if screensize is to small only show the sidebar or the main content have a button to choose between
-  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 768);
-      setSidebarCollapsed(!collapsed);
+      setIsSmallScreen(window.innerWidth < 768); // Adjust the breakpoint as needed
+
+      if (window.innerWidth < 768) {
+        setShowSidebar(false);
+      }
     };
 
     window.addEventListener("resize", handleResize);
+    handleResize(); // Initial check
 
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
 
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+    setShowMain(!showMain); // Set the opposite value to true
+  };
+
   return (
     <div
       className={classNames({
         "grid  min-h-screen p-3": true,
-        "grid-cols-sidebar": !collapsed,
-        "grid-cols-sidebar-collapsed": collapsed,
+        "grid-cols-sidebar": !collapsed && !isSmallScreen,
+        "grid-cols-sidebar-collapsed": collapsed && !isSmallScreen,
         "transition-[grid-template-columns] duration-300 ease-in-out": true,
       })}
     >
-      <SideBar
-        collapsed={collapsed}
-        setCollapsed={setSidebarCollapsed}
-        showSideBar={showSidebar}
-        setShowSidebar={setShowSidebar}
-        date={date}
-        setDate={setDate}
-      />
-      <Main />
+      {isSmallScreen ? (
+        <div>
+          <Button onClick={toggleSidebar}>
+            {showSidebar ? "Show Main" : "Show Sidebar"}
+          </Button>
+          {showSidebar && (
+            <SideBar
+              collapsed={collapsed}
+              setCollapsed={setSidebarCollapsed}
+              showSideBar={showSidebar}
+              setShowSidebar={setShowSidebar}
+              date={date}
+              setDate={setDate}
+            />
+          )}
+          {showMain && <Main />}
+        </div>
+      ) : (
+        <>
+          <SideBar
+            collapsed={collapsed}
+            setCollapsed={setSidebarCollapsed}
+            showSideBar={showSidebar}
+            setShowSidebar={setShowSidebar}
+            date={date}
+            setDate={setDate}
+          />
+          <Main />
+        </>
+      )}
     </div>
   );
 }

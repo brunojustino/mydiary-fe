@@ -85,4 +85,18 @@
     margin: 0;
     -moz-appearance: textfield !important;
   }
+
+  textarea {
+    background: url(../public/images/pageline.png) repeat-y;
+
+    /* font: normal 14px verdana; */
+
+    line-height: 25px;
+
+    border: solid 1px #ddd;
+  }
+
+  textarea:focus-visible {
+    outline: none;
+  }
 }
