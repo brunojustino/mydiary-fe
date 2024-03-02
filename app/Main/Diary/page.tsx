@@ -25,7 +25,7 @@ const Diary = () => {
         }}
         rows={minHeight + 1}
         style={{ minHeight: `${minHeight}em` }}
-        className={`rounded-l-none border-2 border-black pl-2 text-md tracking-tight w-full overflow-hidden `}
+        className={`rounded-l-none border-2 border-black pl-2 text-md tracking-tight w-full overflow-hidden resize-none`}
       />
       {/* </div> */}
     </div>
