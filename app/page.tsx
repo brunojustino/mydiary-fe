@@ -12,13 +12,16 @@ export default function Home(props: PropsWithChildren) {
   const [showMain, setShowMain] = useState(true);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [initialSmallScreen, setInitialSmallScreen] = useState(false);
 
+  // TODO fix the screen resize when it's small
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 768); // Adjust the breakpoint as needed
 
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 768 && !initialSmallScreen) {
         setShowSidebar(false);
+        setInitialSmallScreen(true);
       }
     };
 
@@ -28,7 +31,7 @@ export default function Home(props: PropsWithChildren) {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [initialSmallScreen]);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);

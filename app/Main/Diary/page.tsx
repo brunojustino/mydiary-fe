@@ -12,7 +12,7 @@ import { useState } from "react";
 const Diary = () => {
   const [inputText, setInputText] = useState("");
   const [textHeight, setTextHeight] = useState("600px");
-  const [minHeight, setMinHeight] = useState(20);
+  const [minHeight, setMinHeight] = useState(25);
   return (
     <div className={`${girlFont.className} `}>
       {/* <div className={`grow-wrap`} data-replicatedvalue={inputText}> */}
@@ -21,7 +21,7 @@ const Diary = () => {
         onChange={(e) => {
           setInputText(e.target.value);
           const lines = e.target.value.split("\n").length;
-          setMinHeight(Math.max(20, lines)); // Ensure minHeight is at least 20
+          setMinHeight(Math.max(25, lines)); // Ensure minHeight is at least 20
         }}
         rows={minHeight + 1}
         style={{ minHeight: `${minHeight}em` }}

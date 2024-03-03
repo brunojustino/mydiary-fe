@@ -234,7 +234,6 @@ const ExpenseItem = ({
             onKeyDown={(e) => {
               if (e.key === "Enter") editExpenseValue();
             }}
-            // TODO Fix NaN error
             onBlur={(e) => {
               newExpenseValue == 0 || e.target.value.trim() == ""
                 ? onBlurValue()
