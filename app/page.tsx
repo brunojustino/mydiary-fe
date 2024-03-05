@@ -5,6 +5,7 @@ import classNames from "classnames";
 import React, { PropsWithChildren, useState, useEffect } from "react";
 import SideBar from "@/app/SideBar/page";
 import Main from "@/app/Main/page";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Home(props: PropsWithChildren) {
   const [collapsed, setSidebarCollapsed] = useState(false);
@@ -48,10 +49,29 @@ export default function Home(props: PropsWithChildren) {
       })}
     >
       {isSmallScreen ? (
-        <div>
-          <Button onClick={toggleSidebar}>
-            {showSidebar ? "Show Main" : "Show Sidebar"}
-          </Button>
+        <div className="justify-self-center w-full">
+          <div className="flex justify-center p-2 items-center">
+            <Avatar
+              className={classNames({
+                "ml-5 ": !collapsed,
+                "ml-0": collapsed,
+                "h-12 w-12": true,
+              })}
+            >
+              <AvatarImage
+                src="https://github.com/shadcn.png"
+                className="h-12 w-12"
+              />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <Button
+              variant="outline"
+              onClick={toggleSidebar}
+              className="mb-1 ml-5 border-black"
+            >
+              {showSidebar ? "Diary" : "Sidebar"}
+            </Button>
+          </div>
           {showSidebar && (
             <SideBar
               collapsed={collapsed}
@@ -60,9 +80,12 @@ export default function Home(props: PropsWithChildren) {
               setShowSidebar={setShowSidebar}
               date={date}
               setDate={setDate}
+              isSmallScreen={isSmallScreen}
             />
           )}
-          {showMain && <Main />}
+          {showMain && (
+            <Main isSmallScreen={isSmallScreen} date={date} setDate={setDate} />
+          )}
         </div>
       ) : (
         <>
@@ -73,8 +96,9 @@ export default function Home(props: PropsWithChildren) {
             setShowSidebar={setShowSidebar}
             date={date}
             setDate={setDate}
+            isSmallScreen={isSmallScreen}
           />
-          <Main />
+          <Main isSmallScreen={isSmallScreen} date={date} setDate={setDate} />
         </>
       )}
     </div>
