@@ -17,6 +17,7 @@ const config = {
         "2xl": "1400px",
       },
     },
+
     extend: {
       gridTemplateColumns: {
         sidebar: "300px auto", //for sidebar layout
@@ -25,6 +26,10 @@ const config = {
       },
       fontFamily: {
         theGirlNextDoor: ['"The Girl Next Door"', "cursive"],
+        raleway: ['"Raleway"', "cursive"],
+      },
+      spacing: {
+        "18": "4.5rem",
       },
       colors: {
         border: "hsl(var(--border))",

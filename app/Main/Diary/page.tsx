@@ -1,5 +1,5 @@
 import { Textarea } from "@/components/ui/textarea";
-import girlFont from "@/lib/fonts";
+import { girlFont } from "@/lib/fonts";
 import classNames from "classnames";
 import { useState } from "react";
 

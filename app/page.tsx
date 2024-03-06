@@ -69,7 +69,7 @@ export default function Home(props: PropsWithChildren) {
               onClick={toggleSidebar}
               className="mb-1 ml-5 border-black"
             >
-              {showSidebar ? "Diary" : "Sidebar"}
+              {showSidebar ? "Diary" : "SidePanel"}
             </Button>
           </div>
           {showSidebar && (

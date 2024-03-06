@@ -1,9 +1,12 @@
 import { The_Girl_Next_Door } from "next/font/google";
+import { Raleway } from "next/font/google";
 
-const girlFont = The_Girl_Next_Door({
-    weight: "400",
-    style: "normal",
-    subsets: ["latin"],
-  });
+export const girlFont = The_Girl_Next_Door({
+  weight: "400",
+  style: "normal",
+  subsets: ["latin"],
+});
 
-  export default girlFont
+export const raleway = Raleway({
+  subsets: ["latin"],
+});

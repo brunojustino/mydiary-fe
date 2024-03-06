@@ -5,7 +5,7 @@ import React, { PropsWithChildren, useState } from "react";
 import { Expense } from "./types";
 import ExpenseItem from "./Expense/page";
 
-import girlFont from "@/lib/fonts";
+import { girlFont } from "@/lib/fonts";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

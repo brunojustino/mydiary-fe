@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import React, { useState, useRef } from "react";
 
-import girlFont from "@/lib/fonts";
+import { girlFont } from "@/lib/fonts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
