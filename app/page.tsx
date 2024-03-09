@@ -3,8 +3,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import classNames from "classnames";
 import React, { PropsWithChildren, useState, useEffect } from "react";
-import SideBar from "@/app/SideBar/page";
-import Main from "@/app/Main/page";
+import SideBar from "@/components/ui/Sidebar/page";
+import Main from "@/components/ui/Main/page";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Home(props: PropsWithChildren) {
