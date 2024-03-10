@@ -1,3 +1,4 @@
+"use client";
 import { Textarea } from "@/components/ui/textarea";
 import { girlFont } from "@/lib/fonts";
 import classNames from "classnames";
@@ -11,7 +12,6 @@ import { useState } from "react";
 
 const Diary = () => {
   const [inputText, setInputText] = useState("");
-  const [textHeight, setTextHeight] = useState("600px");
   const [minHeight, setMinHeight] = useState(25);
   return (
     <div className={`${girlFont.className} `}>

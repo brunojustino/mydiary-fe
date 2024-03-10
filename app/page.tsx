@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import classNames from "classnames";
 import React, { PropsWithChildren, useState, useEffect } from "react";
@@ -25,24 +24,6 @@ export default function Home(props: PropsWithChildren) {
     initialSmallScreen,
     setInitialSmallScreen,
   } = useAppContext();
-
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //     setIsSmallScreen(window.innerWidth < 768);
-
-  //     if (window.innerWidth < 768 && !initialSmallScreen) {
-  //       setShowSidebar(false);
-  //       setInitialSmallScreen(true);
-  //     }
-  //   };
-
-  //   window.addEventListener("resize", handleResize);
-  //   handleResize(); // Initial check
-
-  //   return () => {
-  //     window.removeEventListener("resize", handleResize);
-  //   };
-  // }, [initialSmallScreen]);
 
   useResizeEffect(() => {
     setIsSmallScreen(window.innerWidth < 768);
