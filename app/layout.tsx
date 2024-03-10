@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, The_Girl_Next_Door } from "next/font/google";
 import "./globals.css";
+import { AppProvider } from "@/app/AppContext";
 
 import Layout from "@/components/ui/Layout";
 
@@ -20,7 +21,7 @@ export default function RootLayout({
     <html lang="en" className="overflow-auto">
       <body className="bg-yellow-50">
         {/* <Layout> */}
-        {children}
+        <AppProvider>{children}</AppProvider>
         {/* </Layout> */}
       </body>
     </html>

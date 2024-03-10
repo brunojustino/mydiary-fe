@@ -7,32 +7,51 @@ import SideBar from "@/components/ui/Sidebar/page";
 import Main from "@/components/ui/Main/page";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+import { useAppContext } from "@/app/AppContext";
+import useResizeEffect from "@/app/hooks/useResizeEffect";
+
 export default function Home(props: PropsWithChildren) {
-  const [collapsed, setSidebarCollapsed] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(true);
-  const [showMain, setShowMain] = useState(true);
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [initialSmallScreen, setInitialSmallScreen] = useState(false);
+  const {
+    collapsed,
+    setSidebarCollapsed,
+    showSidebar,
+    setShowSidebar,
+    showMain,
+    setShowMain,
+    date,
+    setDate,
+    isSmallScreen,
+    setIsSmallScreen,
+    initialSmallScreen,
+    setInitialSmallScreen,
+  } = useAppContext();
 
-  // TODO fix the screen resize when it's small
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 768); // Adjust the breakpoint as needed
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setIsSmallScreen(window.innerWidth < 768);
 
-      if (window.innerWidth < 768 && !initialSmallScreen) {
-        setShowSidebar(false);
-        setInitialSmallScreen(true);
-      }
-    };
+  //     if (window.innerWidth < 768 && !initialSmallScreen) {
+  //       setShowSidebar(false);
+  //       setInitialSmallScreen(true);
+  //     }
+  //   };
 
-    window.addEventListener("resize", handleResize);
-    handleResize(); // Initial check
+  //   window.addEventListener("resize", handleResize);
+  //   handleResize(); // Initial check
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [initialSmallScreen]);
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, [initialSmallScreen]);
+
+  useResizeEffect(() => {
+    setIsSmallScreen(window.innerWidth < 768);
+
+    if (window.innerWidth < 768 && !initialSmallScreen) {
+      setShowSidebar(false);
+      setInitialSmallScreen(true);
+    }
+  });
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
