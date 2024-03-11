@@ -2,6 +2,7 @@
 
 import classNames from "classnames";
 import React, { PropsWithChildren, useState } from "react";
+import { useSession } from "next-auth/react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -23,6 +24,7 @@ const User = ({
   showSideBar,
   setShowSidebar,
 }: Props) => {
+  const session = useSession();
   const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
   return (
     <li
@@ -53,7 +55,7 @@ const User = ({
             "flex flex-col": true,
           })}
         >
-          <div>John doe</div>
+          <div>{session.data?.user ? session.data.user.name : "John Doe"}</div>
           <div className="m-auto"> Diary </div>
         </div>
         <span>

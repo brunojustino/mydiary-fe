@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
+import { SessionProvider } from "next-auth/react";
 
 interface AppContextType {
   collapsed: boolean;
@@ -38,23 +39,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [initialSmallScreen, setInitialSmallScreen] = useState(false);
 
   return (
-    <AppContext.Provider
-      value={{
-        collapsed,
-        setSidebarCollapsed,
-        showSidebar,
-        setShowSidebar,
-        showMain,
-        setShowMain,
-        date,
-        setDate,
-        isSmallScreen,
-        setIsSmallScreen,
-        initialSmallScreen,
-        setInitialSmallScreen,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
+    <SessionProvider>
+      <AppContext.Provider
+        value={{
+          collapsed,
+          setSidebarCollapsed,
+          showSidebar,
+          setShowSidebar,
+          showMain,
+          setShowMain,
+          date,
+          setDate,
+          isSmallScreen,
+          setIsSmallScreen,
+          initialSmallScreen,
+          setInitialSmallScreen,
+        }}
+      >
+        {children}
+      </AppContext.Provider>
+    </SessionProvider>
   );
 };
