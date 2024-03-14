@@ -43,7 +43,11 @@ const User = ({
         })}
       >
         <AvatarImage
-          src="https://github.com/shadcn.png"
+          src={
+            session.data?.user
+              ? session.data.user.image || "https://github.com/shadcn.png"
+              : "https://github.com/shadcn.png"
+          }
           className="h-12 w-12"
         />
         <AvatarFallback>CN</AvatarFallback>

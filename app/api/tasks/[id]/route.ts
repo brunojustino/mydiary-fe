@@ -9,12 +9,30 @@ export type TaskResponseBodyGet =
   | {
       task: Tasks;
     };
+export type TaskResponseBodyPut =
+  | {
+      error: string;
+    }
+  | {
+      task: Tasks;
+    };
+export type TaskResponseBodyDelete =
+  | {
+      error: string;
+    }
+  | {
+      task: Tasks;
+    };
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Record<string, string> }
 ): Promise<NextResponse<TaskResponseBodyGet>> {
   const id = params.id;
+
+  if (!id) {
+    return NextResponse.json({ error: "Task id not found" }, { status: 404 });
+  }
   const newTask = await db.tasks.findUnique({ where: { id: id } });
 
   if (!newTask) {
@@ -23,12 +41,36 @@ export async function GET(
   return NextResponse.json({ task: newTask });
 }
 
-export async function PATCH(req: NextRequest, response: NextResponse) {
-  const res = await db.tasks.findMany();
-  return Response.json(res);
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Record<string, string> }
+): Promise<NextResponse<TaskResponseBodyPut>> {
+  const id = params.id;
+
+  if (!id) {
+    return NextResponse.json({ error: "Task id not found" }, { status: 404 });
+  }
+  const body = await req.json();
+
+  const updatedTask = await db.tasks.update({
+    where: { id: id },
+    data: {
+      description: body.description,
+      completed: body.completed,
+    },
+  });
+  return NextResponse.json({ task: updatedTask });
 }
 
-export async function DELETE(req: NextRequest, response: NextResponse) {
-  const res = await db.tasks.findMany();
-  return Response.json(res);
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Record<string, string> }
+): Promise<NextResponse<TaskResponseBodyDelete>> {
+  const id = params.id;
+
+  if (!id) {
+    return NextResponse.json({ error: "Task id not found" }, { status: 404 });
+  }
+  const deletedTask = await db.tasks.delete({ where: { id: id } });
+  return NextResponse.json({ task: deletedTask });
 }

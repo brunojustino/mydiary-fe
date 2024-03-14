@@ -8,6 +8,7 @@ import { Tasks } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useSession } from "next-auth/react";
 
 interface Props {
   task: Tasks;
@@ -41,11 +42,17 @@ const TaskItem = ({
     setDisplayInput(true);
   };
 
-  const editTask = () => {
-    const updatedTask = { ...task, name: newTaskName };
-    updateTask(updatedTask);
-    setNewTaskName("");
-    setDisplayInput(false);
+  const editTask = async () => {
+    try {
+      const updatedTask = { ...task, description: newTaskName };
+      await updateTask(updatedTask);
+      // After the task is successfully updated, clear the input field and hide the input display
+      setNewTaskName("");
+      setDisplayInput(false);
+    } catch (error) {
+      console.error("Error updating task:", error);
+      alert("Failed to update task");
+    }
   };
 
   const taskDisplay = () => {

@@ -48,15 +48,56 @@ const Tasks = ({ className }: Props) => {
   const [newTaskName, setNewTaskName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const session = useSession();
-  const updateTask = (updatedTask: Tasks) => {
-    const updatedTaskList = taskList.map((task) =>
-      task.id === updatedTask.id ? updatedTask : task
-    );
-    setTaskList(updatedTaskList);
+  const updateTask = async (updatedTask: Tasks) => {
+    try {
+      const response = await fetch(`/api/tasks/${updatedTask.id}`, {
+        method: "PUT", // Use PUT method for updating
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedTask),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update task");
+      }
+
+      // Assuming the API returns the updated task, you can update the task list with it
+      const updatedTaskFromServer = await response.json();
+      console.log(updatedTaskFromServer.task.description);
+      const updatedTaskList = taskList.map((task) =>
+        task.id === updatedTaskFromServer.task.id
+          ? updatedTaskFromServer.task
+          : task
+      );
+      setTaskList(updatedTaskList);
+    } catch (error) {
+      console.error("Error updating task:", error);
+      alert("Failed to update task");
+    }
   };
 
-  const deleteTask = (taskId: string) => {
-    setTaskList(taskList.filter((task) => task.id !== taskId));
+  // const deleteTask = (taskId: string) => {
+  //   setTaskList(taskList.filter((task) => task.id !== taskId));
+  // };
+
+  const deleteTask = async (taskId: string) => {
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete task");
+      }
+      if (!response.ok) {
+        throw new Error("Failed to delete task");
+      }
+      // Remove the deleted task from the task list
+      const updatedTaskList = taskList.filter((task) => task.id !== taskId);
+      setTaskList(updatedTaskList);
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      alert("Failed to delete task");
+    }
   };
 
   const addNewTask = async (userId: string) => {
