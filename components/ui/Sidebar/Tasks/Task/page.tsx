@@ -4,15 +4,15 @@ import React, { useState } from "react";
 
 import { SquarePenIcon, Trash2Icon, CheckIcon } from "lucide-react";
 
-import { Task } from "../types";
+import { Tasks } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface Props {
-  task: Task;
-  updateTask: (updatedTask: Task) => void;
-  deleteTask: (deletedTask: number) => void;
+  task: Tasks;
+  updateTask: (updatedTask: Tasks) => void;
+  deleteTask: (deletedTask: string) => void;
   newTaskName: string;
   setNewTaskName: (name: string) => void;
 }
@@ -37,7 +37,7 @@ const TaskItem = ({
   };
 
   const handleEditTaskClick = () => {
-    setNewTaskName(task.name);
+    setNewTaskName(task.description);
     setDisplayInput(true);
   };
 
@@ -58,7 +58,7 @@ const TaskItem = ({
           })}
           onClick={handleTaskClick} //handleTaskClick(task.id)
         >
-          {task.name}
+          {task.description}
         </span>
         <div className="flex">
           <SquarePenIcon

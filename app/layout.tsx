@@ -3,8 +3,6 @@ import { Inter, The_Girl_Next_Door } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/app/AppContext";
 
-import Layout from "@/components/ui/Layout";
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

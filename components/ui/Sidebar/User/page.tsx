@@ -62,6 +62,7 @@ const User = ({
           {" "}
           {/* Collapse icon*/}
           {!collapsed}
+          {/* TODO FIX !collapsed icon position */}
           <button
             className={classNames({
               "grid place-content-center text-slate-700  w-6 h-6  opacity-0 md:opacity-100 hover:border-b border-black":

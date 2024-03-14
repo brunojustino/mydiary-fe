@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import { useAppContext } from "@/app/AppContext";
+import { useSession } from "next-auth/react";
 
 import { girlFont } from "@/lib/fonts";
 import { Button } from "@/components/ui/button";
@@ -13,51 +15,74 @@ import {
   CheckIcon,
 } from "lucide-react";
 
-import { Task } from "./types";
+import { Tasks } from "@prisma/client";
 // import type { Tasks } from "@prisma/client";
 import TaskItem from "./Task/page";
 
 type Props = {
-  collapsed: boolean;
-  setCollapsed(collapsed: boolean): void;
   className: string;
 };
 
-const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
-  const [taskList, setTaskList] = useState<Task[]>([
-    { id: 1, name: "Wake up", completed: false },
-    { id: 2, name: "Make coofee", completed: false },
-    { id: 3, name: "Go to the gym", completed: true },
-    { id: 4, name: "Buy rice and eggs", completed: false },
-    { id: 5, name: "Clean the air conditioner", completed: true },
-    { id: 6, name: "Play guitarrrr", completed: false },
-  ]);
+const Tasks = ({ className }: Props) => {
+  const [taskList, setTaskList] = useState<Tasks[]>([]);
+  const { collapsed, setSidebarCollapsed } = useAppContext();
+  useEffect(() => {
+    fetch("/api/tasks/")
+      .then((res) => res.json())
+      .then((data) => {
+        setTaskList(data);
+        console.log(data);
+      });
+  }, []);
+
+  // [
+  //   { id: 1, name: "Wake up", completed: false },
+  //   { id: 2, name: "Make coofee", completed: false },
+  //   { id: 3, name: "Go to the gym", completed: true },
+  //   { id: 4, name: "Buy rice and eggs", completed: false },
+  //   { id: 5, name: "Clean the air conditioner", completed: true },
+  //   { id: 6, name: "Play guitarrrr", completed: false },
+  // ]
 
   const [showAddTask, setShowAddTask] = useState<boolean>(false);
   const [newTaskName, setNewTaskName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
-
-  const updateTask = (updatedTask: Task) => {
+  const session = useSession();
+  const updateTask = (updatedTask: Tasks) => {
     const updatedTaskList = taskList.map((task) =>
       task.id === updatedTask.id ? updatedTask : task
     );
     setTaskList(updatedTaskList);
   };
 
-  const deleteTask = (taskId: number) => {
+  const deleteTask = (taskId: string) => {
     setTaskList(taskList.filter((task) => task.id !== taskId));
   };
 
-  const addNewTask = () => {
+  const addNewTask = async (userId: string) => {
+    console.log("id: ", userId + " " + newTaskName);
     if (newTaskName.trim() !== "") {
-      const newTask: Task = {
-        id: taskList.length + 1,
-        name: newTaskName,
-        completed: false,
-      };
-      setTaskList([...taskList, newTask]);
-      setNewTaskName("");
-      setShowAddTask(false);
+      const description = newTaskName.trim();
+      try {
+        const response = await fetch("/api/tasks", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ description, userId }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to add taskkkkk");
+        }
+        const newTask = await response.json();
+        // Assuming you want to clear the input field after adding the task
+        setNewTaskName("");
+        setShowAddTask(false);
+        setTaskList([...taskList, newTask]);
+      } catch (error) {
+        console.error("Error adding task:", error);
+        alert("Failed to add task2222");
+      }
     }
   };
 
@@ -69,7 +94,7 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
         "rounded-sm p-2 mx-3 gap-1 ": !collapsed,
         "rounded-full p-2 mx-3 w-10 h-10 hover:border": collapsed,
       })}
-      onClick={() => setCollapsed(false)}
+      onClick={() => setSidebarCollapsed(false)}
     >
       <div className="flex justify-center m-auto">
         {collapsed && <ClipboardListIcon className="w-6 h-6" />}
@@ -132,10 +157,12 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
               onChange={(e) => setNewTaskName(e.target.value)}
               autoFocus
               onKeyDown={(e) => {
-                if (e.key === "Enter") addNewTask();
+                if (e.key === "Enter") addNewTask(session.data?.user?.id || "");
               }}
               onBlur={() => {
-                newTaskName.trim() == "" ? setShowAddTask(false) : addNewTask();
+                newTaskName.trim() == ""
+                  ? setShowAddTask(false)
+                  : addNewTask(session.data?.user?.id || "");
               }}
             />
             <Button
@@ -145,7 +172,9 @@ const Tasks = ({ collapsed, setCollapsed, className }: Props) => {
               <CheckIcon
                 strokeWidth={1}
                 className="w-4 h-4 text-green-500"
-                onClick={addNewTask}
+                onClick={() => {
+                  addNewTask(session.data?.user?.id || "");
+                }}
               />
             </Button>
           </div>

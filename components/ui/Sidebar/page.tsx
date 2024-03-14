@@ -65,11 +65,7 @@ const Sidebar = ({
               date={date}
               setDate={setDate}
             />
-            <Tasks
-              collapsed={collapsed}
-              setCollapsed={setCollapsed}
-              className="bg-white"
-            />
+            <Tasks className="bg-white" />
             <Expenses
               collapsed={collapsed}
               setCollapsed={setCollapsed}
