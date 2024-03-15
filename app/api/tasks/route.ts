@@ -3,7 +3,7 @@ import db from "@/app/db"; // Import Prisma Client
 
 export const dynamic = "force-dynamic";
 export async function GET(req: NextApiRequest, response: NextApiResponse) {
-  const res = await db.tasks.findMany();
+  const res = await db.tasks.findMany({});
   return Response.json(res);
 }
 
@@ -29,14 +29,4 @@ export async function POST(req: Request, response: NextApiResponse) {
       { status: 400 }
     );
   }
-}
-
-export async function PATCH(req: NextApiRequest, response: NextApiResponse) {
-  const res = await db.tasks.findMany();
-  return Response.json(res);
-}
-
-export async function DELETE(req: NextApiRequest, response: NextApiResponse) {
-  const res = await db.tasks.findMany();
-  return Response.json(res);
 }

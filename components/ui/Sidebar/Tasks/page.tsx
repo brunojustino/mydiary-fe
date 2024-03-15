@@ -25,15 +25,24 @@ type Props = {
 
 const Tasks = ({ className }: Props) => {
   const [taskList, setTaskList] = useState<Tasks[]>([]);
-  const { collapsed, setSidebarCollapsed } = useAppContext();
+  const { collapsed, setSidebarCollapsed, date } = useAppContext();
+  const newDate = date ? new Date(date) : new Date();
+  const month = String(newDate.getMonth() + 1).padStart(2, "0");
+  const day = String(newDate.getDate()).padStart(2, "0");
+  const year = newDate?.getFullYear();
+
+  const formattedDate = `${month}${day}${year}`;
+  console.log(formattedDate);
   useEffect(() => {
-    fetch("/api/tasks/")
+    fetch(`/api/tasks/${formattedDate}`)
       .then((res) => res.json())
       .then((data) => {
-        setTaskList(data);
-        console.log(data);
+        setTaskList(data.tasks);
+        console.log("dsdsds" + date);
+        const d = date?.getDate();
+        console.log(d);
       });
-  }, []);
+  }, [date, formattedDate]);
 
   // [
   //   { id: 1, name: "Wake up", completed: false },
