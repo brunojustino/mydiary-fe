@@ -113,13 +113,16 @@ const Tasks = ({ className }: Props) => {
     console.log("id: ", userId + " " + newTaskName);
     if (newTaskName.trim() !== "") {
       const description = newTaskName.trim();
+
+      console.log("date add: " + date);
+      const createdAt = newDate;
       try {
         const response = await fetch("/api/tasks", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ description, userId }),
+          body: JSON.stringify({ description, userId, createdAt }),
         });
         if (!response.ok) {
           throw new Error("Failed to add taskkkkk");

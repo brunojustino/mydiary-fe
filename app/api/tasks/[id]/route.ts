@@ -62,10 +62,7 @@ export async function GET(
     if (tasks.length > 0) {
       return NextResponse.json({ tasks: tasks });
     } else {
-      return NextResponse.json(
-        { error: "No tasks found for the given date" },
-        { status: 404 }
-      );
+      return NextResponse.json({ tasks: [] });
     }
   } catch (error) {
     console.error("Error fetching tasks:", error);
