@@ -1,5 +1,5 @@
 import Weekdays from "@/app/Main/Weekdays/page";
-import Diary from "./Diary/page";
+import DiaryUI from "./Diary/page";
 import classNames from "classnames";
 
 type Props = {
@@ -17,7 +17,7 @@ const Main = ({ isSmallScreen, date, setDate }: Props) => {
       })}
     >
       <Weekdays date={date} setDate={setDate} />
-      <Diary />
+      <DiaryUI />
     </div>
   );
 };

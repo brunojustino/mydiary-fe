@@ -1,43 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import db from "@/app/db"; // Import Prisma Client
-import type { Tasks } from "@prisma/client";
-import {
-  updateTasksById,
-  deleteTaskById,
-  getTasksByDate,
-} from "@/app/db/tasks/tasks";
+import type { Diary as Diary } from "@prisma/client";
 
 export type TaskResponseBodyGet =
   | {
       error: string;
     }
   | {
-      tasks: Tasks[];
+      diary: Diary[];
     };
 export type TaskResponseBodyPut =
   | {
       error: string;
     }
   | {
-      task: Tasks;
+      diary: Diary;
     };
 export type TaskResponseBodyDelete =
   | {
       error: string;
     }
   | {
-      task: Tasks;
+      diary: Diary;
     };
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Record<string, string> }
 ): Promise<NextResponse<TaskResponseBodyGet>> {
-  const dateString = request.nextUrl.searchParams.get("date");
-  console.log("datestring - " + dateString);
-  // const dateString = params.id;
-  const userId = params.id;
-  // const dateParams = request.nextUrl.searchParams.get("date");
+  const dateString = params.id;
 
   if (!dateString) {
     return NextResponse.json({ error: "Date not provided" }, { status: 400 });
@@ -57,9 +49,8 @@ export async function GET(
 
   try {
     // Fetch tasks based on the createdAt date
-    const tasks = await db.tasks.findMany({
+    const diary = await db.diary.findMany({
       where: {
-        userId: userId,
         createdAt: {
           // Specify the date range to match tasks created on the given date
           gte: new Date(startDate),
@@ -69,13 +60,13 @@ export async function GET(
     });
 
     // If tasks are found, return them
-    if (tasks.length > 0) {
-      return NextResponse.json({ tasks: tasks });
+    if (diary.length > 0) {
+      return NextResponse.json({ diary: diary });
     } else {
-      return NextResponse.json({ tasks: [] });
+      return NextResponse.json({ diary: [] });
     }
   } catch (error) {
-    console.error("Error fetching tasks:", error);
+    console.error("Error fetching diary:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -90,18 +81,17 @@ export async function PUT(
   const id = params.id;
 
   if (!id) {
-    return NextResponse.json({ error: "Task id not found" }, { status: 404 });
+    return NextResponse.json({ error: "diary id not found" }, { status: 404 });
   }
   const body = await req.json();
 
-  const updatedTask = await db.tasks.update({
+  const updatedDiary = await db.diary.update({
     where: { id: id },
     data: {
-      description: body.description,
-      completed: body.completed,
+      content: body.description,
     },
   });
-  return NextResponse.json({ task: updatedTask });
+  return NextResponse.json({ diary: updatedDiary });
 }
 
 export async function DELETE(
@@ -111,8 +101,8 @@ export async function DELETE(
   const id = params.id;
 
   if (!id) {
-    return NextResponse.json({ error: "Task id not found" }, { status: 404 });
+    return NextResponse.json({ error: "Diary id not found" }, { status: 404 });
   }
-  const deletedTask = await db.tasks.delete({ where: { id: id } });
-  return NextResponse.json({ task: deletedTask });
+  const deletedDiary = await db.diary.delete({ where: { id: id } });
+  return NextResponse.json({ diary: deletedDiary });
 }

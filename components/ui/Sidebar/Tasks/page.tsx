@@ -30,19 +30,19 @@ const Tasks = ({ className }: Props) => {
   const month = String(newDate.getMonth() + 1).padStart(2, "0");
   const day = String(newDate.getDate()).padStart(2, "0");
   const year = newDate?.getFullYear();
+  const session = useSession();
 
+  const userId = session.data?.user?.id;
   const formattedDate = `${month}${day}${year}`;
-  console.log(formattedDate);
+
   useEffect(() => {
-    fetch(`/api/tasks/${formattedDate}`)
+    fetch(`/api/tasks/${userId}?date=${formattedDate}`)
       .then((res) => res.json())
       .then((data) => {
         setTaskList(data.tasks);
-        console.log("dsdsds" + date);
-        const d = date?.getDate();
-        console.log(d);
+        console.log("inside use effect");
       });
-  }, [date, formattedDate]);
+  }, [formattedDate, userId]);
 
   // [
   //   { id: 1, name: "Wake up", completed: false },
@@ -56,7 +56,7 @@ const Tasks = ({ className }: Props) => {
   const [showAddTask, setShowAddTask] = useState<boolean>(false);
   const [newTaskName, setNewTaskName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const session = useSession();
+
   const updateTask = async (updatedTask: Tasks) => {
     try {
       const response = await fetch(`/api/tasks/${updatedTask.id}`, {
@@ -110,24 +110,25 @@ const Tasks = ({ className }: Props) => {
   };
 
   const addNewTask = async (userId: string) => {
-    console.log("id: ", userId + " " + newTaskName);
-    if (newTaskName.trim() !== "") {
-      const description = newTaskName.trim();
+    const description = newTaskName.trim();
+    const createdAt = newDate;
 
-      console.log("date add: " + date);
-      const createdAt = newDate;
+    console.log("addNewTask" + "id: ", userId + " " + newTaskName);
+
+    if (newTaskName.trim() !== "") {
       try {
         const response = await fetch("/api/tasks", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ description, userId, createdAt }),
+          body: JSON.stringify({ description, createdAt, userId }),
         });
         if (!response.ok) {
           throw new Error("Failed to add taskkkkk");
         }
         const newTask = await response.json();
+        console.log("new task" + newTask);
         // Assuming you want to clear the input field after adding the task
         setNewTaskName("");
         setShowAddTask(false);
@@ -210,7 +211,10 @@ const Tasks = ({ className }: Props) => {
               onChange={(e) => setNewTaskName(e.target.value)}
               autoFocus
               onKeyDown={(e) => {
-                if (e.key === "Enter") addNewTask(session.data?.user?.id || "");
+                if (e.key === "Enter") {
+                  console.log("keydown");
+                  addNewTask(session.data?.user?.id || "");
+                }
               }}
               onBlur={() => {
                 newTaskName.trim() == ""

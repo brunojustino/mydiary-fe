@@ -1,29 +1,68 @@
 import type { Tasks } from "@prisma/client"; // Importing the Post type from the Prisma client library.
 import db from "@/app/db";
-import { notFound } from "next/navigation"; // Importing the notFound function from Next.js for handling 404 errors.
 
-export async function fetchTasks(): Promise<Tasks[]> {
-  // Function to fetch all posts from the database.
-  return await db.tasks.findMany({
-    orderBy: [
-      {
-        updatedAt: "asc",
-      },
-    ],
-  });
-}
+import { cache } from "react";
 
-export async function fetchTasksById(id: string): Promise<Tasks | null> {
-  // Function to fetch a single post by its ID.
-  const tasks = await db.tasks.findFirst({
+export const getTasksByDate = cache(async (date: string) => {
+  const tasks = await db.tasks.findMany({
     where: {
-      id,
+      createdAt: {
+        gte: new Date(date),
+      },
     },
   });
-
-  if (!tasks) {
-    notFound(); // If the post is not found, a 404 error is thrown.
-  }
-
   return tasks;
-}
+});
+
+export const getTasksByDateAndUserId = cache(
+  async (date: string, userId: string) => {
+    const tasks = await db.tasks.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(date),
+        },
+        userId: userId,
+      },
+    });
+    return tasks;
+  }
+);
+
+export const createTasks = async (
+  description: string,
+  date: string,
+  userId: string
+) => {
+  const task = await db.tasks.create({
+    data: {
+      description,
+      createdAt: new Date(date),
+      userId,
+    },
+  });
+  return task;
+};
+
+export const updateTasksById = cache(
+  async (description: string, taskId: string) => {
+    const tasks = await db.tasks.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        description,
+        updatedAt: new Date(),
+      },
+    });
+    return tasks;
+  }
+);
+
+export const deleteTaskById = cache(async (id: string) => {
+  const tasks = await db.tasks.delete({
+    where: {
+      id: id,
+    },
+  });
+  return tasks;
+});
