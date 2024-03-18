@@ -217,6 +217,7 @@ const Tasks = ({ className }: Props) => {
                 }
               }}
               onBlur={() => {
+                console.log("onblurrrrrrrrr");
                 newTaskName.trim() == ""
                   ? setShowAddTask(false)
                   : addNewTask(session.data?.user?.id || "");
@@ -232,6 +233,7 @@ const Tasks = ({ className }: Props) => {
                 onClick={() => {
                   addNewTask(session.data?.user?.id || "");
                 }}
+                onMouseDown={(e) => e.preventDefault()}
               />
             </Button>
           </div>
