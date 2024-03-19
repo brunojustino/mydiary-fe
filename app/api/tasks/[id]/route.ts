@@ -4,7 +4,7 @@ import type { Tasks } from "@prisma/client";
 import {
   updateTasksById,
   deleteTaskById,
-  getTasksByDate,
+  getTasksByDateAndUserId,
 } from "@/app/db/tasks/tasks";
 
 export type TaskResponseBodyGet =
@@ -57,16 +57,7 @@ export async function GET(
 
   try {
     // Fetch tasks based on the createdAt date
-    const tasks = await db.tasks.findMany({
-      where: {
-        userId: userId,
-        createdAt: {
-          // Specify the date range to match tasks created on the given date
-          gte: new Date(startDate),
-          lt: new Date(endDate),
-        },
-      },
-    });
+    const tasks = await getTasksByDateAndUserId(dateString, userId);
 
     // If tasks are found, return them
     if (tasks.length > 0) {

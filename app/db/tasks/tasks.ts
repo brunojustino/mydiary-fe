@@ -16,10 +16,17 @@ export const getTasksByDate = cache(async (date: string) => {
 
 export const getTasksByDateAndUserId = cache(
   async (date: string, userId: string) => {
+    const month = parseInt(date.substring(0, 2));
+    const day = parseInt(date.substring(2, 4));
+    const year = parseInt(date.substring(4));
+
+    const startDate = new Date(year, month - 1, day);
+    const endDate = new Date(year, month - 1, day + 1);
     const tasks = await db.tasks.findMany({
       where: {
         createdAt: {
-          gte: new Date(date),
+          gte: new Date(startDate),
+          lt: new Date(endDate),
         },
         userId: userId,
       },

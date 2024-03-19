@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -26,10 +20,10 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId], map: "Account_userId_fkey")
 }
 
 model Session {
@@ -38,6 +32,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Session_userId_fkey")
 }
 
 model VerificationToken {
@@ -49,26 +45,26 @@ model VerificationToken {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
-
-  diary    Diary[]
-  tasks    Tasks[]
-  expenses Expenses[]
-  accounts Account[]
-  sessions Session[]
+  accounts      Account[]
+  diary         Diary[]
+  expenses      Expenses[]
+  sessions      Session[]
+  tasks         Tasks[]
 }
 
 model Diary {
   id        String   @id @default(cuid())
-  content   String?
+  content   String?  @db.Text
   createdAt DateTime @default(now())
+  date      String   @unique
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
   userId    String
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Tasks {
@@ -77,8 +73,10 @@ model Tasks {
   completed   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id])
   userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "Tasks_userId_fkey")
 }
 
 model Expenses {
@@ -88,6 +86,8 @@ model Expenses {
   valuePaid   Float
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id])
   userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "Expenses_userId_fkey")
 }
