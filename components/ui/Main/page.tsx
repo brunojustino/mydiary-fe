@@ -1,4 +1,4 @@
-import Weekdays from "@/app/Main/Weekdays/page";
+import Weekdays from "./Weekdays/page";
 import DiaryUI from "./Diary/page";
 import classNames from "classnames";
 
@@ -16,7 +16,7 @@ const Main = ({ isSmallScreen, date, setDate }: Props) => {
         "flex flex-col ": isSmallScreen,
       })}
     >
-      <Weekdays date={date} setDate={setDate} />
+      <Weekdays />
       <DiaryUI />
     </div>
   );

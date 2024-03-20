@@ -29,7 +29,7 @@ const User = ({
   return (
     <li
       className={classNames({
-        "rounded-full p-2 mx-1 gap-4 ": !collapsed,
+        "rounded-full p-2 mx-1 gap-4 w-full": !collapsed,
         "rounded-full p-2 mx-1 p-2": collapsed,
         "flex gap-2": true,
       })}
@@ -59,7 +59,9 @@ const User = ({
             "flex flex-col": true,
           })}
         >
-          <div>{session.data?.user ? session.data.user.name : "John Doe"}</div>
+          <div className="w-36 text-center">
+            {session.data?.user ? session.data.user.name : "John Doe"}
+          </div>
           <div className="m-auto"> Diary </div>
         </div>
         <span>
@@ -73,7 +75,7 @@ const User = ({
                 true,
 
               "transition-all duration-300 ease-in-out  ": true,
-              "mx-1 gap-4 relative left-[130px] top-[10px]": !collapsed,
+              "mx-1 gap-4 relative left-[50px] top-[10px]": !collapsed,
               "p-2 mx-3 w-10 h-10 relative left-[-16px] top-[10px]": collapsed,
             })}
             onClick={() => setCollapsed(!collapsed)}
