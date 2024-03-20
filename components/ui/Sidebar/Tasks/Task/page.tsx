@@ -27,9 +27,19 @@ const TaskItem = ({
 }: Props) => {
   const [displayInput, setDisplayInput] = useState<boolean>(false);
 
-  const handleTaskClick = () => {
-    const updatedTask = { ...task, completed: !task.completed };
-    updateTask(updatedTask);
+  const handleTaskClick = async () => {
+    // const updatedTask = { ...task, completed: !task.completed };
+    // updateTask(updatedTask);
+    try {
+      const updatedTask = { ...task, description: newTaskName };
+      await updateTask(updatedTask);
+      // After the task is successfully updated, clear the input field and hide the input display
+      setNewTaskName("");
+      setDisplayInput(false);
+    } catch (error) {
+      console.error("Error updating task:", error);
+      alert("Failed to update task");
+    }
   };
 
   const handleDeleteTaskClick = () => {

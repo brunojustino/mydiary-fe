@@ -9,6 +9,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAppContext } from "@/app/AppContext";
 import useResizeEffect from "@/app/hooks/useResizeEffect";
 
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import * as actions from "@/app/actions";
+
 export default function HomeUI(props: PropsWithChildren) {
   const {
     collapsed,
@@ -39,40 +43,67 @@ export default function HomeUI(props: PropsWithChildren) {
     setShowMain(!showMain); // Set the opposite value to true
   };
 
-  return (
-    <div
-      className={classNames({
-        "grid  min-h-screen p-3": true,
-        "grid-cols-sidebar": !collapsed && !isSmallScreen,
-        "grid-cols-sidebar-collapsed": collapsed && !isSmallScreen,
-        "transition-[grid-template-columns] duration-300 ease-in-out": true,
-      })}
-    >
-      {isSmallScreen ? (
-        <div className="justify-self-center w-full">
-          <div className="flex justify-center p-2 items-center">
-            <Avatar
-              className={classNames({
-                "ml-5 ": !collapsed,
-                "ml-0": collapsed,
-                "h-12 w-12": true,
-              })}
-            >
-              <AvatarImage
-                src="https://github.com/shadcn.png"
-                className="h-12 w-12"
+  const session = useSession();
+
+  let authContent: React.ReactNode;
+
+  if (session.status === "loading") {
+    authContent = null;
+  } else if (session.data?.user) {
+    authContent = (
+      <div
+        className={classNames({
+          "grid  min-h-screen p-3": true,
+          "grid-cols-sidebar": !collapsed && !isSmallScreen,
+          "grid-cols-sidebar-collapsed": collapsed && !isSmallScreen,
+          "transition-[grid-template-columns] duration-300 ease-in-out": true,
+        })}
+      >
+        {isSmallScreen ? (
+          <div className="justify-self-center w-full">
+            <div className="flex justify-center p-2 items-center">
+              <Avatar
+                className={classNames({
+                  "ml-5 ": !collapsed,
+                  "ml-0": collapsed,
+                  "h-12 w-12": true,
+                })}
+              >
+                <AvatarImage
+                  src="https://github.com/shadcn.png"
+                  className="h-12 w-12"
+                />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <Button
+                variant="outline"
+                onClick={toggleSidebar}
+                className="mb-1 ml-5 border-black"
+              >
+                {showSidebar ? "Diary" : "SidePanel"}
+              </Button>
+            </div>
+            {showSidebar && (
+              <SideBar
+                collapsed={collapsed}
+                setCollapsed={setSidebarCollapsed}
+                showSideBar={showSidebar}
+                setShowSidebar={setShowSidebar}
+                date={date}
+                setDate={setDate}
+                isSmallScreen={isSmallScreen}
               />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            <Button
-              variant="outline"
-              onClick={toggleSidebar}
-              className="mb-1 ml-5 border-black"
-            >
-              {showSidebar ? "Diary" : "SidePanel"}
-            </Button>
+            )}
+            {showMain && (
+              <Main
+                isSmallScreen={isSmallScreen}
+                date={date}
+                setDate={setDate}
+              />
+            )}
           </div>
-          {showSidebar && (
+        ) : (
+          <>
             <SideBar
               collapsed={collapsed}
               setCollapsed={setSidebarCollapsed}
@@ -82,25 +113,20 @@ export default function HomeUI(props: PropsWithChildren) {
               setDate={setDate}
               isSmallScreen={isSmallScreen}
             />
-          )}
-          {showMain && (
             <Main isSmallScreen={isSmallScreen} date={date} setDate={setDate} />
-          )}
-        </div>
-      ) : (
-        <>
-          <SideBar
-            collapsed={collapsed}
-            setCollapsed={setSidebarCollapsed}
-            showSideBar={showSidebar}
-            setShowSidebar={setShowSidebar}
-            date={date}
-            setDate={setDate}
-            isSmallScreen={isSmallScreen}
-          />
-          <Main isSmallScreen={isSmallScreen} date={date} setDate={setDate} />
-        </>
-      )}
-    </div>
-  );
+          </>
+        )}
+      </div>
+    );
+  } else {
+    authContent = (
+      <>
+        <Link href="/api/auth/signin">
+          <Button>Sign in</Button>
+        </Link>
+      </>
+    );
+  }
+
+  return authContent;
 }

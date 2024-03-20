@@ -30,6 +30,9 @@ export const {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      return baseUrl;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET, //should not have?
 });
