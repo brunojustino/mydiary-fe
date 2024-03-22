@@ -61,11 +61,12 @@ model Diary {
   id        String   @id @default(cuid())
   content   String?  @db.Text
   createdAt DateTime @default(now())
-  date      String   @unique
+  date      String
   updatedAt DateTime @updatedAt
   userId    String
   user      User     @relation(fields: [userId], references: [id])
 
+  @@unique([userId, date])
   @@index([userId], map: "Diary_userId_fkey")
 }
 

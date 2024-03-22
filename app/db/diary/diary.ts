@@ -39,7 +39,7 @@ export const upsertDiaryEntry = async (
   try {
     console.log("upsert diary " + userId + " " + content + " " + date);
     const diaryEntry = await db.diary.upsert({
-      where: { userId, date: date },
+      where: { userId_date: { userId, date } },
       update: { content },
       create: { userId, content, date },
     });
