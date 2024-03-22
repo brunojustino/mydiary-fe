@@ -59,6 +59,7 @@ export async function PUT(
   { params }: { params: Record<string, string> }
 ): Promise<NextResponse<DiaryResponseBodyPut>> {
   const dateString = req.nextUrl.searchParams.get("date");
+  console.log("put diary datestring - " + dateString);
   const userId = params.id;
   const body = await req.json();
   const content = body.content;

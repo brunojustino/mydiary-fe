@@ -7,7 +7,12 @@ export default async function Login() {
 
   return (
     <div>
-      <form action={actions.signIn}>
+      <form
+        action={async () => {
+          "use server";
+          actions.signIn("GitHub");
+        }}
+      >
         <Button type="submit">Sign In with GitHub</Button>
       </form>
 

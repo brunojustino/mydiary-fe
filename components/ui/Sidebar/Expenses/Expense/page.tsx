@@ -4,15 +4,15 @@ import React, { useState } from "react";
 
 import { SquarePenIcon, Trash2Icon, CheckIcon } from "lucide-react";
 
-import { Expense } from "../types";
+import { Expenses } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface Props {
-  expense: Expense;
-  updateExpense: (updatedExpense: Expense) => void;
-  deleteExpense: (deletedExpense: number) => void;
+  expense: Expenses;
+  updateExpense: (updatedExpense: Expenses) => void;
+  deleteExpense: (deletedExpense: string) => void;
   newExpenseValue: number;
   setNewExpenseValue: (value: number) => void;
   newExpenseName: string;
@@ -31,46 +31,81 @@ const ExpenseItem = ({
   const [displayInputName, setDisplayInputName] = useState<boolean>(false);
   const [displayInputValue, setDisplayInputValue] = useState<boolean>(false);
 
-  const handleExpenseClick = () => {
-    const updatedExpense = { ...expense, paid: !expense.paid };
-    updateExpense(updatedExpense);
+  // const handleExpenseClick = () => {
+  //   const updatedExpense = { ...expense, paid: !expense.paid };
+  //   updateExpense(updatedExpense);
+  // };
+
+  const handleExpenseClick = async () => {
+    // const updatedTask = { ...task, completed: !task.completed };
+    // updateTask(updatedTask);
+    try {
+      const updatedExpense = { ...expense, paid: !expense.paid };
+      await updateExpense(updatedExpense);
+      // After the task is successfully updated, clear the input field and hide the input display
+    } catch (error) {
+      console.error("Error updating expense:", error);
+      alert("Failed to update Expense");
+    }
   };
 
-  const handleDeleteExpenseClick = () => {
-    setNewExpenseValue(0.0);
-    setNewExpenseName("");
-    deleteExpense(expense.id);
-  };
+  // const handleDeleteExpenseClick = () => {
+  //   setNewExpenseValue(0.0);
+  //   setNewExpenseName("");
+  //   deleteExpense(expense.id);
+  // };
 
   const handleEditExpenseValueClick = () => {
     setNewExpenseValue(expense.value);
     setDisplayInputValue(true);
   };
   const handleEditExpenseNameClick = () => {
-    setNewExpenseName(expense.name);
+    setNewExpenseName(expense.description);
     setDisplayInputName(true);
   };
 
-  const editExpenseValue = () => {
-    const updatedExpense = {
-      ...expense,
-      value: newExpenseValue,
-    };
-    updateExpense(updatedExpense);
-    setNewExpenseValue(0.0);
-    setDisplayInputName(false);
-    setDisplayInputValue(false);
-  };
-  const editExpenseName = () => {
-    const updatedExpense = {
-      ...expense,
-      name: newExpenseName,
-    };
-    updateExpense(updatedExpense);
+  const handleDeleteExpenseClick = () => {
     setNewExpenseName("");
-    setDisplayInputName(false);
-    setDisplayInputValue(false);
+    deleteExpense(expense.id);
   };
+
+  const editExpenseName = async () => {
+    try {
+      const updatedExpense = { ...expense, description: newExpenseName };
+      await updateExpense(updatedExpense);
+      // After the task is successfully updated, clear the input field and hide the input display
+      setNewExpenseName("");
+      setDisplayInputName(false);
+      setDisplayInputValue(false);
+    } catch (error) {
+      console.error("Error updating task:", error);
+      alert("Failed to update task");
+    }
+  };
+
+  const editExpenseValue = async () => {
+    try {
+      const updatedExpense = { ...expense, value: newExpenseValue };
+      await updateExpense(updatedExpense);
+      // After the task is successfully updated, clear the input field and hide the input display
+      setNewExpenseValue(0.0);
+      setDisplayInputName(false);
+      setDisplayInputValue(false);
+    } catch (error) {
+      console.error("Error updating task:", error);
+      alert("Failed to update task");
+    }
+  };
+  // const editExpenseName = () => {
+  //   const updatedExpense = {
+  //     ...expense,
+  //     name: newExpenseName,
+  //   };
+  //   updateExpense(updatedExpense);
+  //   setNewExpenseName("");
+  //   setDisplayInputName(false);
+  //   setDisplayInputValue(false);
+  // };
 
   const expenseDisplay = () => {
     return (
@@ -90,7 +125,7 @@ const ExpenseItem = ({
           })}
         >
           <span onClick={handleExpenseClick} className="leading-5">
-            {expense.name}
+            {expense.description}
           </span>
           <div className="flex flex-nowrap">
             <SquarePenIcon
@@ -211,7 +246,7 @@ const ExpenseItem = ({
             "w-44 flex group mt-1": true,
           })}
         >
-          <span className="leading-5">{expense.name}</span>
+          <span className="leading-5">{expense.description}</span>
         </div>
 
         <span className="border-l-[1px] border-black flex-grow mt-0"></span>

@@ -62,7 +62,7 @@ const DiaryUI = () => {
     const formattedDate = `${month}${day}${year}`;
 
     try {
-      console.log("updating diaruy");
+      console.log("updating diaruy" + formattedDate + " " + userId);
       const body = updatedDiary
         ? JSON.stringify(updatedDiary)
         : JSON.stringify({ content: "" });

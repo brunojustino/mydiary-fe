@@ -13,12 +13,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?
-  access_token      String?
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String? @db.Text
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -65,6 +65,8 @@ model Diary {
   updatedAt DateTime @updatedAt
   userId    String
   user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "Diary_userId_fkey")
 }
 
 model Tasks {
@@ -80,10 +82,10 @@ model Tasks {
 }
 
 model Expenses {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid())
   description String
   value       Float
-  valuePaid   Float
+  paid        Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   userId      String

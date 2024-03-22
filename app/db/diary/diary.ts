@@ -31,21 +31,25 @@ export const getDiaryByDateAndUserId = cache(
   }
 );
 
-export const upsertDiaryEntry = cache(
-  async (userId: string, content: string, date: string) => {
-    try {
-      const diaryEntry = await db.diary.upsert({
-        where: { userId, date: date },
-        update: { content },
-        create: { userId, content, date },
-      });
-      return diaryEntry;
-    } catch (error) {
-      console.error("Error upserting diary entry:", error);
-      throw error;
-    }
+export const upsertDiaryEntry = async (
+  userId: string,
+  content: string,
+  date: string
+) => {
+  try {
+    console.log("upsert diary " + userId + " " + content + " " + date);
+    const diaryEntry = await db.diary.upsert({
+      where: { userId, date: date },
+      update: { content },
+      create: { userId, content, date },
+    });
+    return diaryEntry;
+  } catch (error) {
+    console.error("Error upserting diary entry:", error);
+    throw error;
   }
-);
+};
+
 export const createTasks = async (
   description: string,
   date: string,

@@ -2,8 +2,8 @@
 
 import * as auth from "@/app/auth";
 
-export async function signIn() {
-  return auth.signIn("github");
+export async function signIn(provider: string) {
+  return auth.signIn(provider);
 }
 
 export async function signOut() {

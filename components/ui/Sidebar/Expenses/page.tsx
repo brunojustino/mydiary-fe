@@ -1,8 +1,10 @@
 import { cn, formatNumber } from "@/lib/utils";
+import React, { useState, useEffect } from "react";
 
-import React, { PropsWithChildren, useState } from "react";
+import { useAppContext } from "@/app/AppContext";
+import { useSession } from "next-auth/react";
 
-import { Expense } from "./types";
+import { Expenses } from "@prisma/client";
 import ExpenseItem from "./Expense/page";
 
 import { girlFont } from "@/lib/fonts";
@@ -18,26 +20,44 @@ import {
 } from "@heroicons/react/24/outline";
 
 type Props = {
-  collapsed: boolean;
-  setCollapsed(collapsed: boolean): void;
   className?: string;
 };
 
-const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
-  const [expensesList, setExpensesList] = useState<Expense[]>([
-    { id: 1, name: "water", value: 5.0, paid: false },
-    { id: 2, name: "netflix", value: 10.0, paid: false },
-    { id: 3, name: "school", value: 255.0, paid: true },
-    { id: 4, name: "rent", value: 2486.45, paid: false },
-    { id: 5, name: "hooker", value: 80.58, paid: true },
-    {
-      id: 6,
-      name: "this is really big text for a simple description",
-      value: 99999999.99,
-      paid: false,
-    },
-    { id: 7, name: "hookers", value: 180.58, paid: true },
-  ]);
+const Expenses = ({ className }: Props) => {
+  // const [expensesList, setExpensesList] = useState<Expense[]>([
+  //   { id: 1, name: "water", value: 5.0, paid: false },
+  //   { id: 2, name: "netflix", value: 10.0, paid: false },
+  //   { id: 3, name: "school", value: 255.0, paid: true },
+  //   { id: 4, name: "rent", value: 2486.45, paid: false },
+  //   { id: 5, name: "hooker", value: 80.58, paid: true },
+  //   {
+  //     id: 6,
+  //     name: "this is really big text for a simple description",
+  //     value: 99999999.99,
+  //     paid: false,
+  //   },
+  //   { id: 7, name: "hookers", value: 180.58, paid: true },
+  // ]);
+
+  const [expensesList, setExpensesList] = useState<Expenses[]>([]);
+  const { collapsed, setSidebarCollapsed, date } = useAppContext();
+  const newDate = date ? new Date(date) : new Date();
+  const month = String(newDate.getMonth() + 1).padStart(2, "0");
+  const day = String(newDate.getDate()).padStart(2, "0");
+  const year = newDate?.getFullYear();
+  const session = useSession();
+
+  const userId = session.data?.user?.id;
+  const formattedDate = `${month}${day}${year}`;
+
+  useEffect(() => {
+    fetch(`/api/expenses/${userId}?date=${formattedDate}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setExpensesList(data.expenses);
+        console.log("inside use effect");
+      });
+  }, [formattedDate, userId]);
 
   const [showAddExpense, setShowAddExpense] = useState<boolean>(false);
   const [newExpenseValue, setNewExpenseValue] = useState<number>(0);
@@ -53,32 +73,113 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
     else return acc;
   }, 0);
 
-  const updateExpense = (updatedExpense: Expense) => {
-    const updatedExpensesList = expensesList.map((expense) =>
-      expense.id === updatedExpense.id ? updatedExpense : expense
-    );
-    setExpensesList(updatedExpensesList);
-  };
+  // const updateExpense = (updatedExpense: Expenses) => {
+  //   const updatedExpensesList = expensesList.map((expense) =>
+  //     expense.id === updatedExpense.id ? updatedExpense : expense
+  //   );
+  //   setExpensesList(updatedExpensesList);
+  // };
 
-  const deleteExpense = (expenseId: number) => {
-    setExpensesList(expensesList.filter((expense) => expense.id !== expenseId));
-  };
+  const updateExpense = async (updatedExpense: Expenses) => {
+    try {
+      const response = await fetch(`/api/expenses/${updatedExpense.id}`, {
+        method: "PUT", // Use PUT method for updating
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedExpense),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update expense");
+      }
 
-  const addNewExpense = () => {
-    if (newExpenseValue !== 0 && newExpenseName.trim() !== "") {
-      const newExpense: Expense = {
-        id: expensesList.length + 1,
-        name: newExpenseName,
-        value: newExpenseValue,
-        paid: false,
-      };
-      setExpensesList([...expensesList, newExpense]);
-      setNewExpenseValue(0);
-      setNewExpenseName("");
-      setErrorMessage("");
-      setShowAddExpense(false);
+      // Assuming the API returns the updated task, you can update the task list with it
+      const updatedExpenseFromServer = await response.json();
+      const updatedExpenseList = expensesList.map((expense) =>
+        expense.id === updatedExpenseFromServer.expense.id
+          ? updatedExpenseFromServer.expense
+          : expense
+      );
+      setExpensesList(updatedExpenseList);
+    } catch (error) {
+      console.error("Error updating expense:", error);
+      alert("Failed to update expense");
     }
   };
+
+  // const deleteExpense = (expenseId: number) => {
+  //   setExpensesList(expensesList.filter((expense) => expense.id !== expenseId));
+  // };
+
+  const deleteExpense = async (expenseId: string) => {
+    try {
+      const response = await fetch(`/api/expenses/${expenseId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete Expense");
+      }
+      if (!response.ok) {
+        throw new Error("Failed to delete Expense");
+      }
+      // Remove the deleted task from the task list
+      const updatedExpenseList = expensesList.filter(
+        (expense) => expense.id !== expenseId
+      );
+      setExpensesList(updatedExpenseList);
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+      alert("Failed to delete expense");
+    }
+  };
+
+  const addNewExpense = async (userId: string) => {
+    const description = newExpenseName.trim();
+    const value = newExpenseValue;
+    const createdAt = newDate;
+
+    console.log("addNewExpense" + "id: ", userId + " " + newExpenseName);
+
+    if (newExpenseValue !== 0 && newExpenseName.trim() !== "") {
+      try {
+        const response = await fetch("/api/expenses", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ description, value, createdAt, userId }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to add taskkkkk");
+        }
+        const newExpense = await response.json();
+        console.log("new expense" + newExpense);
+        // Assuming you want to clear the input field after adding the task
+        setNewExpenseName("");
+        setShowAddExpense(false);
+        setExpensesList([...expensesList, newExpense]);
+      } catch (error) {
+        console.error("Error adding expense:", error);
+        alert("Failed to add Expense");
+      }
+    }
+  };
+
+  // const addNewExpense = () => {
+  //   if (newExpenseValue !== 0 && newExpenseName.trim() !== "") {
+  //     const newExpense: Expense = {
+  //       id: expensesList.length + 1,
+  //       name: newExpenseName,
+  //       value: newExpenseValue,
+  //       paid: false,
+  //     };
+  //     setExpensesList([...expensesList, newExpense]);
+  //     setNewExpenseValue(0);
+  //     setNewExpenseName("");
+  //     setErrorMessage("");
+  //     setShowAddExpense(false);
+  //   }
+  // };
 
   const onBlurValue = () => {
     if (newExpenseValue <= 0) {
@@ -93,7 +194,6 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
     // }
   };
 
-  // TODO add masl to value display: 9,999,999,999.00
   return (
     <li
       className={cn(className, girlFont.className, {
@@ -102,7 +202,7 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
         "rounded-sm p-2 mx-3 gap-1 ": !collapsed,
         "rounded-full mx-3 p-2 w-10 h-10 hover:border": collapsed,
       })}
-      onClick={() => setCollapsed(false)}
+      onClick={() => setSidebarCollapsed(false)}
     >
       <div className="flex justify-center m-auto">
         {collapsed && <CurrencyDollarIcon className="w-6 h-6" />}
@@ -191,9 +291,16 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
                   }
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") addNewExpense();
+                  if (e.key === "Enter") {
+                    console.log("keydown");
+                    addNewExpense(session.data?.user?.id || "");
+                  }
                 }}
-                onBlur={onBlurValue}
+                onBlur={() => {
+                  newExpenseName.trim() == ""
+                    ? setShowAddExpense(false)
+                    : addNewExpense(session.data?.user?.id || "");
+                }}
               />
               <Button
                 size="icon"
@@ -202,7 +309,10 @@ const Expenses = ({ collapsed, setCollapsed, className }: Props) => {
                 <CheckIcon
                   strokeWidth={1}
                   className="w-4 h-4 text-green-500"
-                  onClick={addNewExpense}
+                  onClick={() => {
+                    addNewExpense(session.data?.user?.id || "");
+                  }}
+                  onMouseDown={(e) => e.preventDefault()}
                 />
               </Button>
             </div>
