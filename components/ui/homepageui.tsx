@@ -32,6 +32,10 @@ export default function HomeUI(props: PropsWithChildren) {
   useResizeEffect(() => {
     setIsSmallScreen(window.innerWidth < 768);
 
+    if (window.innerWidth <= 768) {
+      setSidebarCollapsed(false);
+    }
+
     if (window.innerWidth < 768 && !initialSmallScreen) {
       setShowSidebar(false);
       setInitialSmallScreen(true);
@@ -120,11 +124,12 @@ export default function HomeUI(props: PropsWithChildren) {
     );
   } else {
     authContent = (
-      <>
+      <div className="flex justify-center items-center h-screen flex-col">
+        <h2 className="p-2 text-2xl ">Please Sign In to continue</h2>
         <Link href="/api/auth/signin">
           <Button>Sign in</Button>
         </Link>
-      </>
+      </div>
     );
   }
 

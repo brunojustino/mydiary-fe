@@ -5,11 +5,29 @@ import React, { PropsWithChildren, useState } from "react";
 import { useSession } from "next-auth/react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import * as actions from "@/app/actions";
 
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
+  ArrowRightEndOnRectangleIcon,
 } from "@heroicons/react/24/outline";
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+  viewBox="0 0 24 24"
+  strokeWidth={1.5}
+  stroke="currentColor"
+  className="w-6 h-6"
+>
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
+  />
+</svg>;
 
 type Props = {
   collapsed: boolean;
@@ -26,6 +44,7 @@ const User = ({
 }: Props) => {
   const session = useSession();
   const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
+  const Logout = ArrowRightEndOnRectangleIcon;
   return (
     <li
       className={classNames({
@@ -50,6 +69,23 @@ const User = ({
           }
           className="h-12 w-12"
         />
+        <span
+          className={classNames({
+            "rounded-full": true,
+            "fixed top-[45px] left-[62px]": !collapsed,
+            "fixed top-[45px] left-[40px]": collapsed,
+          })}
+        >
+          <form action={actions.signOut}>
+            <Button
+              type="submit"
+              className="p-0 m-0 rounded-full bg-zinc-100/70 hover:bg-zinc-100/90  h-5 w-5 "
+              variant="ghost"
+            >
+              <Logout className="w-4 h-4 " />
+            </Button>
+          </form>
+        </span>
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
       <div className="flex justify-center">
@@ -65,10 +101,8 @@ const User = ({
           <div className="m-auto"> Diary </div>
         </div>
         <span>
-          {" "}
-          {/* Collapse icon*/}
           {!collapsed}
-          {/* TODO FIX !collapsed icon position */}
+
           <button
             className={classNames({
               "grid place-content-center text-slate-700  w-6 h-6  opacity-0 md:opacity-100 hover:border-b border-black":
